@@ -733,6 +733,9 @@
                     <button id="selectAllBtn" class="btn-secondary">Select All</button>
                     <button id="deleteSelectedBtn" class="btn-danger">Delete Selected</button>
                     <button id="exportSelectedBtn" class="btn-secondary">Export Selected</button>
+                    <button id="importBtn" class="btn-primary">Import CSV/Excel</button>
+                    <button id="downloadTemplateBtn" class="btn-secondary">Download Template</button>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
                 </div>
 
                 <div class="transactions-list" id="transactionsList">
@@ -1369,7 +1372,211 @@
 
         // Export Functions
         function exportToPDF(reportType) {
-            alert('PDF export requires full jsPDF implementation. For now, use Print (Ctrl+P) to save as PDF.');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(20);
+            doc.text('SmallBiz BookKeeping Pro', 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Report Type: ${reportType.toUpperCase()}`, 20, 30);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 37);
+            doc.text(`License: ${APP.licenseKey}`, 20, 44);
+            
+            let yPos = 55;
+            
+            if (reportType === 'income') {
+                // Income Statement
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
+                
+                const income = filtered.filter(t => t.type === 'income');
+                const expenses = filtered.filter(t => t.type === 'expense');
+                const totalIncome = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                const totalExpenses = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                
+                doc.setFontSize(16);
+                doc.text('Income Statement', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(10);
+                doc.text(`Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`, 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(12);
+                doc.text('INCOME', 20, yPos);
+                yPos += 7;
+                
+                doc.setFontSize(10);
+                income.forEach(t => {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(`  ${t.date} - ${t.description}`, 20, yPos);
+                    doc.text(`$${parseFloat(t.amount).toFixed(2)}`, 170, yPos);
+                    yPos += 5;
+                });
+                
+                yPos += 3;
+                doc.setFontSize(11);
+                doc.text('Total Income:', 20, yPos);
+                doc.text(`$${totalIncome.toFixed(2)}`, 170, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(12);
+                doc.text('EXPENSES', 20, yPos);
+                yPos += 7;
+                
+                doc.setFontSize(10);
+                expenses.forEach(t => {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(`  ${t.date} - ${t.description}`, 20, yPos);
+                    doc.text(`$${parseFloat(t.amount).toFixed(2)}`, 170, yPos);
+                    yPos += 5;
+                });
+                
+                yPos += 3;
+                doc.setFontSize(11);
+                doc.text('Total Expenses:', 20, yPos);
+                doc.text(`$${totalExpenses.toFixed(2)}`, 170, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(14);
+                doc.text('NET INCOME:', 20, yPos);
+                doc.text(`$${(totalIncome - totalExpenses).toFixed(2)}`, 170, yPos);
+                
+            } else if (reportType === 'cashflow') {
+                // Cash Flow Report
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
+                
+                const cashIn = filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                const cashOut = filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                
+                doc.setFontSize(16);
+                doc.text('Cash Flow Statement', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(10);
+                doc.text(`Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`, 20, yPos);
+                yPos += 15;
+                
+                doc.setFontSize(12);
+                doc.text('Cash Inflows:', 20, yPos);
+                doc.text(`$${cashIn.toFixed(2)}`, 170, yPos);
+                yPos += 10;
+                
+                doc.text('Cash Outflows:', 20, yPos);
+                doc.text(`$${cashOut.toFixed(2)}`, 170, yPos);
+                yPos += 15;
+                
+                doc.setFontSize(14);
+                doc.text('Net Cash Flow:', 20, yPos);
+                doc.text(`$${(cashIn - cashOut).toFixed(2)}`, 170, yPos);
+                
+            } else if (reportType === 'category') {
+                // Category Analysis
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
+                
+                const byCategory = {};
+                filtered.forEach(t => {
+                    if (!byCategory[t.category]) {
+                        byCategory[t.category] = { income: 0, expense: 0 };
+                    }
+                    if (t.type === 'income') {
+                        byCategory[t.category].income += parseFloat(t.amount);
+                    } else {
+                        byCategory[t.category].expense += parseFloat(t.amount);
+                    }
+                });
+                
+                doc.setFontSize(16);
+                doc.text('Category Analysis', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(10);
+                doc.text(`Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`, 20, yPos);
+                yPos += 15;
+                
+                doc.setFontSize(11);
+                for (const [category, amounts] of Object.entries(byCategory)) {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    const total = amounts.income - amounts.expense;
+                    doc.text(`${category}:`, 20, yPos);
+                    doc.text(`$${total.toFixed(2)}`, 170, yPos);
+                    yPos += 7;
+                }
+                
+            } else if (reportType === 'tax') {
+                // Tax Report
+                const year = parseInt(document.getElementById('taxYear').value);
+                const yearTransactions = APP.transactions.filter(t => new Date(t.date).getFullYear() === year);
+                
+                const totalIncome = yearTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                
+                const expensesByCategory = {};
+                yearTransactions.filter(t => t.type === 'expense').forEach(t => {
+                    if (!expensesByCategory[t.category]) {
+                        expensesByCategory[t.category] = 0;
+                    }
+                    expensesByCategory[t.category] += parseFloat(t.amount);
+                });
+                
+                const totalExpenses = Object.values(expensesByCategory).reduce((sum, val) => sum + val, 0);
+                const netProfit = totalIncome - totalExpenses;
+                
+                doc.setFontSize(16);
+                doc.text(`Schedule C - Tax Year ${year}`, 20, yPos);
+                yPos += 15;
+                
+                doc.setFontSize(13);
+                doc.text('GROSS INCOME', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(11);
+                doc.text('Total Income:', 20, yPos);
+                doc.text(`$${totalIncome.toFixed(2)}`, 170, yPos);
+                yPos += 15;
+                
+                doc.setFontSize(13);
+                doc.text('EXPENSES', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(10);
+                for (const [category, amount] of Object.entries(expensesByCategory)) {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(`${category}:`, 20, yPos);
+                    doc.text(`$${amount.toFixed(2)}`, 170, yPos);
+                    yPos += 6;
+                }
+                
+                yPos += 5;
+                doc.setFontSize(11);
+                doc.text('Total Expenses:', 20, yPos);
+                doc.text(`$${totalExpenses.toFixed(2)}`, 170, yPos);
+                yPos += 15;
+                
+                doc.setFontSize(14);
+                doc.text('NET PROFIT:', 20, yPos);
+                doc.text(`$${netProfit.toFixed(2)}`, 170, yPos);
+            }
+            
+            // Save the PDF
+            doc.save(`${reportType}-report-${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
         function exportToExcel() {
@@ -1377,6 +1584,131 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
             XLSX.writeFile(wb, 'transactions.xlsx');
+        }
+
+        // Import Functions
+        function downloadTemplate() {
+            const template = [
+                {
+                    date: '2025-02-06',
+                    type: 'income',
+                    category: 'Sales',
+                    description: 'Sample income transaction',
+                    amount: 1000.00,
+                    notes: 'Optional notes field'
+                },
+                {
+                    date: '2025-02-06',
+                    type: 'expense',
+                    category: 'Office Expense',
+                    description: 'Sample expense transaction',
+                    amount: 150.00,
+                    notes: 'Optional notes field'
+                }
+            ];
+            
+            const ws = XLSX.utils.json_to_sheet(template);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Template');
+            XLSX.writeFile(wb, 'import-template.xlsx');
+        }
+        
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            const fileName = file.name.toLowerCase();
+            
+            reader.onload = function(e) {
+                try {
+                    let importedData = [];
+                    
+                    if (fileName.endsWith('.csv')) {
+                        // Parse CSV
+                        const text = e.target.result;
+                        const lines = text.split('\n');
+                        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                        
+                        for (let i = 1; i < lines.length; i++) {
+                            if (!lines[i].trim()) continue;
+                            
+                            const values = lines[i].split(',');
+                            const transaction = {};
+                            
+                            headers.forEach((header, index) => {
+                                transaction[header] = values[index]?.trim() || '';
+                            });
+                            
+                            importedData.push(transaction);
+                        }
+                    } else {
+                        // Parse Excel
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        importedData = XLSX.utils.sheet_to_json(firstSheet);
+                    }
+                    
+                    // Process and validate imported data
+                    let successCount = 0;
+                    let errorCount = 0;
+                    
+                    importedData.forEach(row => {
+                        try {
+                            // Normalize field names
+                            const transaction = {
+                                date: row.date || row.Date || row.DATE || new Date().toISOString().split('T')[0],
+                                type: (row.type || row.Type || row.TYPE || 'expense').toLowerCase(),
+                                category: row.category || row.Category || row.CATEGORY || 'Other Expenses',
+                                description: row.description || row.Description || row.DESCRIPTION || 'Imported',
+                                amount: parseFloat(row.amount || row.Amount || row.AMOUNT || 0),
+                                notes: row.notes || row.Notes || row.NOTES || ''
+                            };
+                            
+                            // Validate required fields
+                            if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
+                                errorCount++;
+                                return;
+                            }
+                            
+                            // Validate type
+                            if (!['income', 'expense'].includes(transaction.type)) {
+                                transaction.type = 'expense';
+                            }
+                            
+                            // Validate category
+                            const validCategories = [...APP.categories.income, ...APP.categories.expense];
+                            if (!validCategories.includes(transaction.category)) {
+                                transaction.category = transaction.type === 'income' ? 'Other Income' : 'Other Expenses';
+                            }
+                            
+                            addTransaction(transaction);
+                            successCount++;
+                        } catch (err) {
+                            console.error('Error importing row:', row, err);
+                            errorCount++;
+                        }
+                    });
+                    
+                    // Show results
+                    alert(`Import complete!\n\nSuccessfully imported: ${successCount} transactions\nErrors: ${errorCount}`);
+                    
+                    // Reset file input
+                    event.target.value = '';
+                    
+                } catch (error) {
+                    console.error('Import error:', error);
+                    alert('Error importing file. Please check the file format.\n\nExpected columns: date, type, category, description, amount, notes');
+                    event.target.value = '';
+                }
+            };
+            
+            if (fileName.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
         }
 
         // Initialize App
@@ -1493,6 +1825,15 @@
                 XLSX.utils.book_append_sheet(wb, ws, 'Selected Transactions');
                 XLSX.writeFile(wb, 'selected-transactions.xlsx');
             });
+            
+            // Import functionality
+            document.getElementById('importBtn').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            
+            document.getElementById('fileInput').addEventListener('change', handleFileImport);
+            
+            document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
             
             // Reports
             document.getElementById('generateReportBtn').addEventListener('click', generateReports);
