@@ -459,9 +459,9 @@
 
         .transaction-item {
             display: grid;
-            grid-template-columns: 40px 120px 100px 1fr 150px 120px 80px;
-            gap: 16px;
-            padding: 18px;
+            grid-template-columns: 40px 110px 90px 140px 2fr 130px 140px;
+            gap: 20px;
+            padding: 20px;
             border-bottom: 1px solid var(--bg-tertiary);
             align-items: center;
             transition: all 0.2s ease;
@@ -469,11 +469,29 @@
 
         .transaction-item:hover {
             background: var(--bg-secondary);
-            transform: translateX(4px);
+            transform: translateX(2px);
         }
 
         .transaction-item:last-child {
             border-bottom: none;
+        }
+
+        .transaction-date {
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .transaction-category {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .transaction-description {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         .transaction-checkbox {
@@ -802,11 +820,20 @@
             
             .transaction-item {
                 grid-template-columns: 40px 1fr 100px;
-                gap: 8px;
+                gap: 12px;
+            }
+            
+            .transaction-item .transaction-category,
+            .transaction-item .transaction-description {
+                display: none;
             }
             
             .reports-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .license-container {
+                padding: 32px;
             }
         }
     </style>
@@ -1251,10 +1278,10 @@
             container.innerHTML = filtered.map(t => `
                 <div class="transaction-item">
                     <input type="checkbox" class="transaction-checkbox" data-id="${t.id}">
-                    <div>${new Date(t.date).toLocaleDateString()}</div>
+                    <div class="transaction-date">${new Date(t.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</div>
                     <div class="transaction-type ${t.type}">${t.type}</div>
-                    <div>${t.category}</div>
-                    <div>${t.description}</div>
+                    <div class="transaction-category">${t.category}</div>
+                    <div class="transaction-description">${t.description}</div>
                     <div class="transaction-amount">$${parseFloat(t.amount).toFixed(2)}</div>
                     <div class="transaction-actions">
                         <button class="action-btn" onclick="editTransaction('${t.id}')">Edit</button>
@@ -1833,19 +1860,24 @@
                             
                             // If date is a number (Excel serial date), convert it
                             if (typeof dateValue === 'number') {
-                                // Excel dates start from 1900-01-01
-                                const excelEpoch = new Date(1900, 0, 1);
-                                const days = dateValue - 2; // Excel has a leap year bug for 1900
-                                const convertedDate = new Date(excelEpoch.getTime() + days * 24 * 60 * 60 * 1000);
-                                dateValue = convertedDate.toISOString().split('T')[0];
+                                // Excel dates: serial number of days since 1900-01-01
+                                // Subtract 1 because Excel incorrectly treats 1900 as a leap year
+                                // Add 1 day offset for timezone
+                                const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
+                                dateValue = excelDate.toISOString().split('T')[0];
                             } else if (dateValue instanceof Date) {
                                 // If it's already a Date object
                                 dateValue = dateValue.toISOString().split('T')[0];
                             } else if (typeof dateValue === 'string') {
-                                // Try to parse string date
-                                const parsedDate = new Date(dateValue);
-                                if (!isNaN(parsedDate.getTime())) {
-                                    dateValue = parsedDate.toISOString().split('T')[0];
+                                // Check if it's already in YYYY-MM-DD format
+                                if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+                                    // Already in correct format
+                                } else {
+                                    // Try to parse string date
+                                    const parsedDate = new Date(dateValue);
+                                    if (!isNaN(parsedDate.getTime())) {
+                                        dateValue = parsedDate.toISOString().split('T')[0];
+                                    }
                                 }
                             }
                             
