@@ -457,6 +457,20 @@
             overflow: hidden;
         }
 
+        .transaction-header {
+            display: grid;
+            grid-template-columns: 40px 110px 90px 140px 2fr 130px 140px;
+            gap: 20px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .transaction-item {
             display: grid;
             grid-template-columns: 40px 110px 90px 140px 2fr 130px 140px;
@@ -818,6 +832,10 @@
                 grid-template-columns: 1fr;
             }
             
+            .transaction-header {
+                display: none;
+            }
+            
             .transaction-item {
                 grid-template-columns: 40px 1fr 100px;
                 gap: 12px;
@@ -938,7 +956,7 @@
                 </div>
 
                 <div class="transactions-list" id="transactionsList">
-                    <!-- Transactions will be rendered here -->
+                    <!-- Header and transactions will be rendered here -->
                 </div>
             </section>
 
@@ -1270,12 +1288,25 @@
             
             filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
             
+            // Keep the header, update only the transaction rows
+            const header = `
+                <div class="transaction-header">
+                    <div></div>
+                    <div>Date</div>
+                    <div>Type</div>
+                    <div>Category</div>
+                    <div>Description</div>
+                    <div>Amount</div>
+                    <div>Actions</div>
+                </div>
+            `;
+            
             if (filtered.length === 0) {
-                container.innerHTML = '<div style="padding: 32px; text-align: center; color: var(--text-secondary);">No transactions found</div>';
+                container.innerHTML = header + '<div style="padding: 32px; text-align: center; color: var(--text-secondary);">No transactions found</div>';
                 return;
             }
             
-            container.innerHTML = filtered.map(t => `
+            const rows = filtered.map(t => `
                 <div class="transaction-item">
                     <input type="checkbox" class="transaction-checkbox" data-id="${t.id}">
                     <div class="transaction-date">${new Date(t.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</div>
@@ -1289,6 +1320,8 @@
                     </div>
                 </div>
             `).join('');
+            
+            container.innerHTML = header + rows;
         }
 
         function updateDashboard() {
