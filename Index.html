@@ -2062,9 +2062,9 @@
                     
                     importedData.forEach((row, index) => {
                         try {
+                            // Handle both uppercase and lowercase column names
                             // More flexible column name matching (case-insensitive)
-                            let dateValue = row.date || row.Date || row.DATE || 
-                                          row.Date || row['DATE'] || new Date().toISOString().split('T')[0];
+                            let dateValue = row.DATE || row.Date || row.date || new Date().toISOString().split('T')[0];
                             
                             if (typeof dateValue === 'number') {
                                 const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
@@ -2089,16 +2089,26 @@
                             
                             const transaction = {
                                 date: dateValue,
-                                type: (row.type || row.Type || row.TYPE || 'expense').toLowerCase().trim(),
-                                category: row.category || row.Category || row.CATEGORY || 'Other Expenses',
-                                description: row.description || row.Description || row.DESCRIPTION || 'Imported',
-                                amount: parseFloat(row.amount || row.Amount || row.AMOUNT || 0),
-                                notes: (row.notes || row.Notes || row.NOTES || '').toString()
+                                type: (row.TYPE || row.Type || row.type || 'expense').toString().toLowerCase().trim(),
+                                category: row.CATEGORY || row.Category || row.category || 'Other Expenses',
+                                description: row.DESCRIPTION || row.Description || row.description || 'Imported',
+                                amount: parseFloat(row.AMOUNT || row.Amount || row.amount || 0),
+                                notes: (row.NOTES || row.Notes || row.notes || '').toString()
                             };
+                            
+                            console.log(`📝 Row ${index + 2} parsed:`, {
+                                date: transaction.date,
+                                type: transaction.type,
+                                amount: transaction.amount,
+                                description: transaction.description
+                            });
                             
                             // Validation
                             if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
-                                console.warn(`⚠️ Row ${index + 2} skipped: Invalid date or amount`, transaction);
+                                console.warn(`⚠️ Row ${index + 2} skipped: Invalid date or amount`);
+                                console.warn('   Date:', transaction.date, '(type:', typeof transaction.date, ')');
+                                console.warn('   Amount:', transaction.amount, '(type:', typeof transaction.amount, ')');
+                                console.warn('   Raw row data:', row);
                                 skippedRows.push(index + 2);
                                 errorCount++;
                                 return;
