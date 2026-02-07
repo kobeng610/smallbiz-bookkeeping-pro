@@ -1507,6 +1507,20 @@
                 .filter(t => t.type === 'expense')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
             
+            console.log('💰 DASHBOARD CALCULATIONS:');
+            console.log('  Total transactions:', APP.transactions.length);
+            console.log('  Income transactions:', APP.transactions.filter(t => t.type === 'income').length);
+            console.log('  Expense transactions:', APP.transactions.filter(t => t.type === 'expense').length);
+            console.log('  Income total:', income);
+            console.log('  Expenses total:', expenses);
+            console.log('  Net income:', income - expenses);
+            
+            // Log each expense for debugging
+            console.log('📋 EXPENSE BREAKDOWN:');
+            APP.transactions.filter(t => t.type === 'expense').forEach(t => {
+                console.log(`  - ${t.description}: $${parseFloat(t.amount).toFixed(2)} (type: ${typeof t.amount})`);
+            });
+            
             document.getElementById('totalRevenue').textContent = `$${income.toFixed(2)}`;
             document.getElementById('totalExpenses').textContent = `$${expenses.toFixed(2)}`;
             document.getElementById('netIncome').textContent = `$${(income - expenses).toFixed(2)}`;
@@ -1660,6 +1674,20 @@
             const totalExpenses = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const netIncome = totalIncome - totalExpenses;
             
+            console.log('📊 INCOME STATEMENT REPORT:');
+            console.log('  Period:', startDate, 'to', endDate);
+            console.log('  Transactions in period:', transactions.length);
+            console.log('  Income items:', income.length);
+            console.log('  Expense items:', expenses.length);
+            console.log('  Total Income:', totalIncome);
+            console.log('  Total Expenses:', totalExpenses);
+            console.log('  Net Income:', netIncome);
+            
+            console.log('📋 EXPENSE ITEMS:');
+            expenses.forEach(t => {
+                console.log(`  - ${t.date}: ${t.description} = $${parseFloat(t.amount).toFixed(2)}`);
+            });
+            
             const html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
@@ -1710,6 +1738,9 @@
                 }
             });
             
+            console.log('📊 CATEGORY ANALYSIS:');
+            console.log('  Categories:', Object.keys(byCategory));
+            
             let html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
@@ -1717,8 +1748,25 @@
             `;
             
             for (const [category, amounts] of Object.entries(byCategory)) {
-                const total = amounts.income - amounts.expense;
-                html += `<p><strong>${category}:</strong> $${total.toFixed(2)}</p>`;
+                // Show income as positive, expenses as positive too (not negative)
+                let total = amounts.income + amounts.expense; // Both are positive now
+                let displayValue = total;
+                
+                // If it's purely expenses, just show the expense amount
+                if (amounts.income === 0 && amounts.expense > 0) {
+                    displayValue = amounts.expense;
+                }
+                // If it's purely income, show income
+                else if (amounts.expense === 0 && amounts.income > 0) {
+                    displayValue = amounts.income;
+                }
+                // If mixed, show net (income - expense)
+                else {
+                    displayValue = amounts.income - amounts.expense;
+                }
+                
+                console.log(`  ${category}: Income=$${amounts.income.toFixed(2)}, Expense=$${amounts.expense.toFixed(2)}, Display=$${displayValue.toFixed(2)}`);
+                html += `<p><strong>${category}:</strong> $${displayValue.toFixed(2)}</p>`;
             }
             
             html += '</div>';
@@ -2092,7 +2140,7 @@
                                 type: (row.TYPE || row.Type || row.type || 'expense').toString().toLowerCase().trim(),
                                 category: row.CATEGORY || row.Category || row.category || 'Other Expenses',
                                 description: row.DESCRIPTION || row.Description || row.description || 'Imported',
-                                amount: parseFloat(row.AMOUNT || row.Amount || row.amount || 0),
+                                amount: Math.abs(parseFloat(row.AMOUNT || row.Amount || row.amount || 0)), // Take absolute value
                                 notes: (row.NOTES || row.Notes || row.notes || '').toString()
                             };
                             
