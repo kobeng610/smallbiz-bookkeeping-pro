@@ -896,6 +896,7 @@
             <button class="nav-btn" data-tab="transactions">Transactions</button>
             <button class="nav-btn" data-tab="reports">Reports</button>
             <button class="nav-btn" data-tab="tax">Tax Center</button>
+            <button class="nav-btn" data-tab="settings">Settings</button>
         </nav>
 
         <!-- Main Content -->
@@ -1016,6 +1017,67 @@
                 <div class="tax-actions">
                     <button id="exportTaxPdfBtn" class="btn-primary">Export Tax PDF</button>
                     <button id="exportTaxExcelBtn" class="btn-secondary">Export to Excel</button>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settingsTab" class="tab-content">
+                <h2>Business Settings</h2>
+                
+                <div class="report-card" style="max-width: 800px; margin: 0 auto;">
+                    <h3>Business/Individual Information</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">This information will appear on reports and tax documents.</p>
+                    
+                    <form id="settingsForm">
+                        <label>
+                            Business/Individual Name:
+                            <input type="text" id="settingsBusinessName" placeholder="e.g., John Doe or Acme Consulting LLC">
+                        </label>
+                        
+                        <label>
+                            Street Address:
+                            <input type="text" id="settingsAddress" placeholder="e.g., 123 Main Street">
+                        </label>
+                        
+                        <label style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                City:
+                                <input type="text" id="settingsCity" placeholder="e.g., New York">
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                State:
+                                <input type="text" id="settingsState" placeholder="e.g., NY" maxlength="2">
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                ZIP:
+                                <input type="text" id="settingsZip" placeholder="e.g., 10001" maxlength="10">
+                            </div>
+                        </label>
+                        
+                        <label>
+                            Phone Number (Optional):
+                            <input type="tel" id="settingsPhone" placeholder="e.g., (555) 123-4567">
+                        </label>
+                        
+                        <label>
+                            Email (Optional):
+                            <input type="email" id="settingsEmail" placeholder="e.g., john@example.com">
+                        </label>
+                        
+                        <label>
+                            Tax ID / EIN / SSN (Optional):
+                            <input type="text" id="settingsTaxId" placeholder="e.g., 12-3456789">
+                        </label>
+                        
+                        <div style="margin-top: 28px; display: flex; gap: 12px;">
+                            <button type="submit" class="btn-primary">Save Settings</button>
+                            <button type="button" id="clearSettingsBtn" class="btn-secondary">Clear All</button>
+                        </div>
+                    </form>
+                    
+                    <div id="settingsSavedMessage" style="display: none; margin-top: 20px; padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border: 2px solid #10b981; font-weight: 500;">
+                        ✅ Settings saved successfully!
+                    </div>
                 </div>
             </section>
         </main>
@@ -1330,6 +1392,16 @@
             version: '1.0.0',
             licenseKey: null,
             transactions: [],
+            businessSettings: {
+                businessName: '',
+                address: '',
+                city: '',
+                state: '',
+                zip: '',
+                phone: '',
+                email: '',
+                taxId: ''
+            },
             categories: {
                 income: ['Sales', 'Services', 'Consulting', 'Products', 'Other Income'],
                 expense: ['Advertising', 'Car & Truck', 'Commissions', 'Contract Labor', 'Depreciation', 
@@ -1399,6 +1471,7 @@
         // Data Management
         function saveData() {
             localStorage.setItem('sbkp_transactions', JSON.stringify(APP.transactions));
+            localStorage.setItem('sbkp_settings', JSON.stringify(APP.businessSettings));
         }
 
         function loadData() {
@@ -1406,6 +1479,83 @@
             if (saved) {
                 APP.transactions = JSON.parse(saved);
             }
+            
+            const savedSettings = localStorage.getItem('sbkp_settings');
+            if (savedSettings) {
+                APP.businessSettings = JSON.parse(savedSettings);
+                loadSettingsToForm();
+            }
+        }
+        
+        function loadSettingsToForm() {
+            document.getElementById('settingsBusinessName').value = APP.businessSettings.businessName || '';
+            document.getElementById('settingsAddress').value = APP.businessSettings.address || '';
+            document.getElementById('settingsCity').value = APP.businessSettings.city || '';
+            document.getElementById('settingsState').value = APP.businessSettings.state || '';
+            document.getElementById('settingsZip').value = APP.businessSettings.zip || '';
+            document.getElementById('settingsPhone').value = APP.businessSettings.phone || '';
+            document.getElementById('settingsEmail').value = APP.businessSettings.email || '';
+            document.getElementById('settingsTaxId').value = APP.businessSettings.taxId || '';
+        }
+        
+        function saveSettings() {
+            APP.businessSettings = {
+                businessName: document.getElementById('settingsBusinessName').value,
+                address: document.getElementById('settingsAddress').value,
+                city: document.getElementById('settingsCity').value,
+                state: document.getElementById('settingsState').value.toUpperCase(),
+                zip: document.getElementById('settingsZip').value,
+                phone: document.getElementById('settingsPhone').value,
+                email: document.getElementById('settingsEmail').value,
+                taxId: document.getElementById('settingsTaxId').value
+            };
+            
+            saveData();
+            
+            // Show success message
+            const messageEl = document.getElementById('settingsSavedMessage');
+            messageEl.style.display = 'block';
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        function clearSettings() {
+            if (confirm('Are you sure you want to clear all business settings?')) {
+                APP.businessSettings = {
+                    businessName: '',
+                    address: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    phone: '',
+                    email: '',
+                    taxId: ''
+                };
+                loadSettingsToForm();
+                saveData();
+            }
+        }
+        
+        function getBusinessHeader() {
+            const s = APP.businessSettings;
+            if (!s.businessName && !s.address) {
+                return '';
+            }
+            
+            let header = '';
+            if (s.businessName) header += s.businessName + '\n';
+            if (s.address) header += s.address + '\n';
+            if (s.city || s.state || s.zip) {
+                header += (s.city ? s.city + ', ' : '') + 
+                         (s.state ? s.state + ' ' : '') + 
+                         (s.zip || '') + '\n';
+            }
+            if (s.phone) header += 'Phone: ' + s.phone + '\n';
+            if (s.email) header += 'Email: ' + s.email + '\n';
+            if (s.taxId) header += 'Tax ID: ' + s.taxId + '\n';
+            
+            return header;
         }
 
         // Transaction Management
@@ -1842,14 +1992,33 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            doc.setFontSize(20);
-            doc.text('SmallBiz BookKeeping Pro', 20, 20);
-            doc.setFontSize(12);
-            doc.text(`Report Type: ${reportType.toUpperCase()}`, 20, 30);
-            doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 37);
-            doc.text(`License: ${APP.licenseKey}`, 20, 44);
+            let yPos = 20;
             
-            let yPos = 55;
+            // Add business header if available
+            const businessHeader = getBusinessHeader();
+            if (businessHeader) {
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                const headerLines = businessHeader.trim().split('\n');
+                headerLines.forEach(line => {
+                    doc.text(line, 20, yPos);
+                    yPos += 5;
+                });
+                yPos += 5;
+                doc.setFont(undefined, 'normal');
+            }
+            
+            // Header
+            doc.setFontSize(20);
+            doc.text('SmallBiz BookKeeping Pro', 20, yPos);
+            yPos += 7;
+            doc.setFontSize(12);
+            doc.text(`Report Type: ${reportType.toUpperCase()}`, 20, yPos);
+            yPos += 5;
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 20, yPos);
+            yPos += 5;
+            doc.text(`License: ${APP.licenseKey}`, 20, yPos);
+            yPos += 10;
             
             if (reportType === 'income') {
                 const startDate = document.getElementById('reportStartDate').value;
@@ -2362,6 +2531,14 @@
             document.getElementById('generateTaxBtn').addEventListener('click', generateTaxSummary);
             document.getElementById('exportTaxPdfBtn').addEventListener('click', () => exportToPDF('tax'));
             document.getElementById('exportTaxExcelBtn').addEventListener('click', exportToExcel);
+            
+            // Settings
+            document.getElementById('settingsForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveSettings();
+            });
+            
+            document.getElementById('clearSettingsBtn').addEventListener('click', clearSettings);
         });
     </script>
 </body>
