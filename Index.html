@@ -1317,6 +1317,14 @@
         // APPLICATION CODE
         // ============================================
         
+        // Helper function to format currency with commas
+        function formatCurrency(amount) {
+            return parseFloat(amount).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        
         // Application State
         const APP = {
             version: '1.0.0',
@@ -1487,7 +1495,7 @@
                     <div class="transaction-type ${t.type}">${t.type}</div>
                     <div class="transaction-category">${t.category}</div>
                     <div class="transaction-description">${t.description}</div>
-                    <div class="transaction-amount">$${parseFloat(t.amount).toFixed(2)}</div>
+                    <div class="transaction-amount">$${formatCurrency(t.amount)}</div>
                     <div class="transaction-actions">
                         <button class="action-btn" onclick="editTransaction('${t.id}')">Edit</button>
                         <button class="action-btn" onclick="deleteTransaction('${t.id}')">Delete</button>
@@ -1521,9 +1529,9 @@
                 console.log(`  - ${t.description}: $${parseFloat(t.amount).toFixed(2)} (type: ${typeof t.amount})`);
             });
             
-            document.getElementById('totalRevenue').textContent = `$${income.toFixed(2)}`;
-            document.getElementById('totalExpenses').textContent = `$${expenses.toFixed(2)}`;
-            document.getElementById('netIncome').textContent = `$${(income - expenses).toFixed(2)}`;
+            document.getElementById('totalRevenue').textContent = `$${formatCurrency(income)}`;
+            document.getElementById('totalExpenses').textContent = `$${formatCurrency(expenses)}`;
+            document.getElementById('netIncome').textContent = `$${formatCurrency(income - expenses)}`;
             document.getElementById('totalTransactions').textContent = APP.transactions.length;
             
             updateChart();
@@ -1692,10 +1700,10 @@
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
                     <hr style="margin: 16px 0;">
-                    <p><strong>Total Income:</strong> $${totalIncome.toFixed(2)}</p>
-                    <p><strong>Total Expenses:</strong> $${totalExpenses.toFixed(2)}</p>
+                    <p><strong>Total Income:</strong> $${formatCurrency(totalIncome)}</p>
+                    <p><strong>Total Expenses:</strong> $${formatCurrency(totalExpenses)}</p>
                     <hr style="margin: 16px 0;">
-                    <p style="font-size: 16px;"><strong>Net Income:</strong> $${netIncome.toFixed(2)}</p>
+                    <p style="font-size: 16px;"><strong>Net Income:</strong> $${formatCurrency(netIncome)}</p>
                 </div>
             `;
             
@@ -1714,10 +1722,10 @@
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
                     <hr style="margin: 16px 0;">
-                    <p><strong>Cash In:</strong> $${cashIn.toFixed(2)}</p>
-                    <p><strong>Cash Out:</strong> $${cashOut.toFixed(2)}</p>
+                    <p><strong>Cash In:</strong> $${formatCurrency(cashIn)}</p>
+                    <p><strong>Cash Out:</strong> $${formatCurrency(cashOut)}</p>
                     <hr style="margin: 16px 0;">
-                    <p style="font-size: 16px;"><strong>Net Cash Flow:</strong> $${netCash.toFixed(2)}</p>
+                    <p style="font-size: 16px;"><strong>Net Cash Flow:</strong> $${formatCurrency(netCash)}</p>
                 </div>
             `;
             
@@ -1725,9 +1733,15 @@
         }
 
         function generateCategoryAnalysis(transactions, startDate, endDate) {
+            console.log('📊 CATEGORY ANALYSIS - DEBUG:');
+            console.log('  Total transactions in period:', transactions.length);
+            console.log('  All transactions:', transactions);
+            
             const byCategory = {};
             
             transactions.forEach(t => {
+                console.log(`  Processing: ${t.date} - ${t.type} - ${t.category} - $${t.amount}`);
+                
                 if (!byCategory[t.category]) {
                     byCategory[t.category] = { income: 0, expense: 0 };
                 }
@@ -1738,8 +1752,8 @@
                 }
             });
             
-            console.log('📊 CATEGORY ANALYSIS:');
-            console.log('  Categories:', Object.keys(byCategory));
+            console.log('📊 CATEGORY TOTALS:');
+            console.log('  Categories found:', Object.keys(byCategory));
             
             let html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
@@ -1766,7 +1780,7 @@
                 }
                 
                 console.log(`  ${category}: Income=$${amounts.income.toFixed(2)}, Expense=$${amounts.expense.toFixed(2)}, Display=$${displayValue.toFixed(2)}`);
-                html += `<p><strong>${category}:</strong> $${displayValue.toFixed(2)}</p>`;
+                html += `<p><strong>${category}:</strong> $${formatCurrency(displayValue)}</p>`;
             }
             
             html += '</div>';
@@ -1803,20 +1817,20 @@
                     <h3>Schedule C - Tax Year ${year}</h3>
                     <hr style="margin: 16px 0;">
                     <h4>Gross Income</h4>
-                    <p><strong>Total Income:</strong> $${totalIncome.toFixed(2)}</p>
+                    <p><strong>Total Income:</strong> $${formatCurrency(totalIncome)}</p>
                     <hr style="margin: 16px 0;">
                     <h4>Expenses</h4>
             `;
             
             for (const [category, amount] of Object.entries(expensesByCategory)) {
-                html += `<p><strong>${category}:</strong> $${amount.toFixed(2)}</p>`;
+                html += `<p><strong>${category}:</strong> $${formatCurrency(amount)}</p>`;
             }
             
             html += `
                     <hr style="margin: 16px 0;">
-                    <p><strong>Total Expenses:</strong> $${totalExpenses.toFixed(2)}</p>
+                    <p><strong>Total Expenses:</strong> $${formatCurrency(totalExpenses)}</p>
                     <hr style="margin: 16px 0;">
-                    <h4 style="font-size: 18px;"><strong>Net Profit:</strong> $${netProfit.toFixed(2)}</h4>
+                    <h4 style="font-size: 18px;"><strong>Net Profit:</strong> $${formatCurrency(netProfit)}</h4>
                 </div>
             `;
             
