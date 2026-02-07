@@ -866,13 +866,13 @@
             </div>
             <div class="license-form">
                 <h2>Activate Your License</h2>
-                <input type="text" id="licenseKeyInput" placeholder="Enter your license key" maxlength="23">
+                <input type="text" id="licenseKeyInput" placeholder="Enter your license key" maxlength="19">
                 <button id="activateBtn" class="btn-primary">Activate License</button>
                 <p class="license-message" id="licenseMessage"></p>
             </div>
             <div class="license-footer">
                 <p>Single License Purchase: $250</p>
-                <p style="margin-top: 12px; font-size: 12px;">Trial Key: SBKP-2025-XXXX-TRIAL</p>
+                <p style="margin-top: 12px; font-size: 12px;">Demo Key: 7Y5L-KSGG-8288-WAMQ</p>
             </div>
         </div>
     </div>
@@ -1086,26 +1086,47 @@
 
             initializeLicenseDatabase() {
                 return {
+                    // Demo/Trial Licenses
                     'SBKP-2025-XXXX-TRIAL': {
                         type: 'trial',
                         deviceFingerprint: null,
                         activatedAt: null,
                         expiresAt: null,
-                        features: ['all']
+                        features: ['all'],
+                        buyer: 'Trial User',
+                        email: 'trial@example.com'
                     },
-                    'SBKP-2025-DEMO-00001': {
-                        type: 'full',
+                    
+                    // Customer Licenses
+                    '857Y-M4WG-M3H3-NDR7': {
+                        type: 'SINGLE',
                         deviceFingerprint: null,
                         activatedAt: null,
                         expiresAt: null,
-                        features: ['all']
+                        features: ['all'],
+                        buyer: 'Peter King Ofori',
+                        email: 'Peterkin@hotmail.com',
+                        generated: '2026-02-05T17:23:08.549Z'
                     },
-                    'SBKP-2025-PROD-12345': {
-                        type: 'full',
+                    '7Y5L-KSGG-8288-WAMQ': {
+                        type: 'DEMO',
                         deviceFingerprint: null,
                         activatedAt: null,
                         expiresAt: null,
-                        features: ['all']
+                        features: ['all'],
+                        buyer: 'Alma Agra',
+                        email: 'almaa.wfg@gmail.com',
+                        generated: '2026-02-05T17:57:07.478Z'
+                    },
+                    'D9VF-JSDK-XUMV-F2BZ': {
+                        type: 'SINGLE',
+                        deviceFingerprint: null,
+                        activatedAt: null,
+                        expiresAt: null,
+                        features: ['all'],
+                        buyer: 'Kofi',
+                        email: 'kobengasiedu@aarp.org',
+                        generated: '2026-02-06T01:09:17.959Z'
                     }
                 };
             }
@@ -1182,8 +1203,12 @@
             }
 
             validateLicenseFormat(key) {
-                const pattern = /^SBKP-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{5}$/;
-                return pattern.test(key);
+                // Accept SBKP format: SBKP-YYYY-XXXX-XXXXX
+                const sbkpPattern = /^SBKP-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{5}$/;
+                // Accept custom format: XXXX-XXXX-XXXX-XXXX
+                const customPattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+                
+                return sbkpPattern.test(key) || customPattern.test(key);
             }
 
             async activateLicense(licenseKey) {
