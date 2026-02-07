@@ -2016,6 +2016,8 @@
             const file = event.target.files[0];
             if (!file) return;
             
+            console.log('📁 Starting file import:', file.name);
+            
             const reader = new FileReader();
             const fileName = file.name.toLowerCase();
             
@@ -2027,6 +2029,8 @@
                         const text = e.target.result;
                         const lines = text.split('\n');
                         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                        
+                        console.log('📋 CSV Headers found:', headers);
                         
                         for (let i = 1; i < lines.length; i++) {
                             if (!lines[i].trim()) continue;
@@ -2045,14 +2049,22 @@
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         importedData = XLSX.utils.sheet_to_json(firstSheet);
+                        
+                        console.log('📊 Excel data loaded:', importedData.length, 'rows');
+                        console.log('📋 First row sample:', importedData[0]);
                     }
                     
                     let successCount = 0;
                     let errorCount = 0;
+                    let skippedRows = [];
                     
-                    importedData.forEach(row => {
+                    console.log('🔄 Processing', importedData.length, 'rows...');
+                    
+                    importedData.forEach((row, index) => {
                         try {
-                            let dateValue = row.date || row.Date || row.DATE || new Date().toISOString().split('T')[0];
+                            // More flexible column name matching (case-insensitive)
+                            let dateValue = row.date || row.Date || row.DATE || 
+                                          row.Date || row['DATE'] || new Date().toISOString().split('T')[0];
                             
                             if (typeof dateValue === 'number') {
                                 const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
@@ -2060,8 +2072,13 @@
                             } else if (dateValue instanceof Date) {
                                 dateValue = dateValue.toISOString().split('T')[0];
                             } else if (typeof dateValue === 'string') {
+                                // Handle different date formats
                                 if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
-                                    // Already in correct format
+                                    // Already in YYYY-MM-DD format
+                                } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateValue)) {
+                                    // Handle MM/DD/YYYY format
+                                    const parts = dateValue.split('/');
+                                    dateValue = `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
                                 } else {
                                     const parsedDate = new Date(dateValue);
                                     if (!isNaN(parsedDate.getTime())) {
@@ -2072,41 +2089,59 @@
                             
                             const transaction = {
                                 date: dateValue,
-                                type: (row.type || row.Type || row.TYPE || 'expense').toLowerCase(),
+                                type: (row.type || row.Type || row.TYPE || 'expense').toLowerCase().trim(),
                                 category: row.category || row.Category || row.CATEGORY || 'Other Expenses',
                                 description: row.description || row.Description || row.DESCRIPTION || 'Imported',
                                 amount: parseFloat(row.amount || row.Amount || row.AMOUNT || 0),
-                                notes: row.notes || row.Notes || row.NOTES || ''
+                                notes: (row.notes || row.Notes || row.NOTES || '').toString()
                             };
                             
+                            // Validation
                             if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
+                                console.warn(`⚠️ Row ${index + 2} skipped: Invalid date or amount`, transaction);
+                                skippedRows.push(index + 2);
                                 errorCount++;
                                 return;
                             }
                             
                             if (!['income', 'expense'].includes(transaction.type)) {
+                                console.warn(`⚠️ Row ${index + 2}: Invalid type '${transaction.type}', defaulting to 'expense'`);
                                 transaction.type = 'expense';
                             }
                             
                             const validCategories = [...APP.categories.income, ...APP.categories.expense];
                             if (!validCategories.includes(transaction.category)) {
+                                console.warn(`⚠️ Row ${index + 2}: Invalid category '${transaction.category}', using default`);
                                 transaction.category = transaction.type === 'income' ? 'Other Income' : 'Other Expenses';
                             }
                             
+                            console.log(`✅ Row ${index + 2} imported:`, transaction);
                             addTransaction(transaction);
                             successCount++;
                         } catch (err) {
-                            console.error('Error importing row:', row, err);
+                            console.error(`❌ Error importing row ${index + 2}:`, row, err);
+                            skippedRows.push(index + 2);
                             errorCount++;
                         }
                     });
                     
-                    alert(`Import complete!\n\nSuccessfully imported: ${successCount} transactions\nErrors: ${errorCount}`);
+                    console.log('✅ Import complete!', {successCount, errorCount, skippedRows});
+                    
+                    let message = `Import complete!\n\n✅ Successfully imported: ${successCount} transactions`;
+                    if (errorCount > 0) {
+                        message += `\n❌ Errors: ${errorCount}`;
+                        if (skippedRows.length > 0 && skippedRows.length <= 5) {
+                            message += `\n\nSkipped rows: ${skippedRows.join(', ')}`;
+                        }
+                        message += `\n\nCheck browser console for details.`;
+                    }
+                    
+                    alert(message);
                     event.target.value = '';
                     
                 } catch (error) {
-                    console.error('Import error:', error);
-                    alert('Error importing file. Please check the file format.\n\nExpected columns: date, type, category, description, amount, notes');
+                    console.error('❌ Import error:', error);
+                    alert('Error importing file. Please check the file format.\n\nExpected columns: DATE, TYPE, CATEGORY, DESCRIPTION, AMOUNT, NOTES\n\nCheck browser console for details.');
                     event.target.value = '';
                 }
             };
