@@ -1066,16 +1066,20 @@
         </div>
     </div>
 
+    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <!-- Advanced License Authentication System -->
+    <script src="license-auth.js"></script>
+    
+    <!-- Main Application Script -->
     <script>
         // Application State
         const APP = {
             version: '1.0.0',
             licenseKey: null,
-            deviceFingerprint: null,
             transactions: [],
             categories: {
                 income: ['Sales', 'Services', 'Consulting', 'Products', 'Other Income'],
@@ -1088,113 +1092,43 @@
             editingTransactionId: null
         };
 
-        // Device Fingerprinting
-        function generateDeviceFingerprint() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.textBaseline = 'top';
-            ctx.font = '14px Arial';
-            ctx.fillText('fingerprint', 2, 2);
-            const canvasData = canvas.toDataURL();
-            
-            const fingerprint = {
-                userAgent: navigator.userAgent,
-                language: navigator.language,
-                platform: navigator.platform,
-                screenResolution: `${screen.width}x${screen.height}`,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                canvasHash: hashString(canvasData)
-            };
-            
-            return hashString(JSON.stringify(fingerprint));
-        }
+        // Initialize Advanced License System
+        const licenseAuth = new LicenseAuth();
 
-        function hashString(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return Math.abs(hash).toString(36);
-        }
-
-        // License System
-        const VALID_LICENSES = {
-            'SBKP-2025-XXXX-TRIAL': { type: 'trial', deviceFingerprint: null },
-            'SBKP-2025-DEMO-00001': { type: 'full', deviceFingerprint: null },
-            'SBKP-2025-PROD-12345': { type: 'full', deviceFingerprint: null }
-        };
-
-        function validateLicenseFormat(key) {
-            const pattern = /^SBKP-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{5}$/;
-            return pattern.test(key);
-        }
-
-        function activateLicense(licenseKey) {
+        // License Management Functions
+        async function activateLicense(licenseKey) {
             const messageEl = document.getElementById('licenseMessage');
             
-            if (!validateLicenseFormat(licenseKey)) {
-                messageEl.textContent = 'Invalid license key format';
+            const result = await licenseAuth.activateLicense(licenseKey);
+            
+            if (result.success) {
+                messageEl.textContent = 'License activated successfully!';
+                messageEl.className = 'license-message success';
+                
+                APP.licenseKey = licenseKey;
+                
+                setTimeout(() => {
+                    showMainApp();
+                }, 1000);
+            } else {
+                messageEl.textContent = result.error;
                 messageEl.className = 'license-message error';
-                return false;
             }
-            
-            const licenseData = VALID_LICENSES[licenseKey];
-            if (!licenseData) {
-                messageEl.textContent = 'Invalid license key';
-                messageEl.className = 'license-message error';
-                return false;
-            }
-            
-            const deviceFP = generateDeviceFingerprint();
-            
-            if (licenseData.deviceFingerprint && licenseData.deviceFingerprint !== deviceFP) {
-                messageEl.textContent = 'This license is already activated on another device';
-                messageEl.className = 'license-message error';
-                return false;
-            }
-            
-            // Activate license
-            licenseData.deviceFingerprint = deviceFP;
-            APP.licenseKey = licenseKey;
-            APP.deviceFingerprint = deviceFP;
-            
-            // Save to localStorage
-            localStorage.setItem('sbkp_license', licenseKey);
-            localStorage.setItem('sbkp_fingerprint', deviceFP);
-            
-            messageEl.textContent = 'License activated successfully!';
-            messageEl.className = 'license-message success';
-            
-            setTimeout(() => {
-                showMainApp();
-            }, 1000);
-            
-            return true;
         }
 
-        function checkLicense() {
-            const savedLicense = localStorage.getItem('sbkp_license');
-            const savedFingerprint = localStorage.getItem('sbkp_fingerprint');
-            
-            if (!savedLicense || !savedFingerprint) {
-                return false;
+        async function checkLicense() {
+            const isValid = await licenseAuth.verifyLicense();
+            if (isValid) {
+                APP.licenseKey = licenseAuth.licenseKey;
             }
-            
-            const licenseData = VALID_LICENSES[savedLicense];
-            if (!licenseData) {
-                return false;
+            return isValid;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                licenseAuth.deactivateLicense();
+                location.reload();
             }
-            
-            const currentFingerprint = generateDeviceFingerprint();
-            if (savedFingerprint !== currentFingerprint) {
-                return false;
-            }
-            
-            APP.licenseKey = savedLicense;
-            APP.deviceFingerprint = savedFingerprint;
-            return true;
         }
 
         function showMainApp() {
@@ -1203,14 +1137,6 @@
             document.getElementById('licenseInfo').textContent = `License: ${APP.licenseKey}`;
             loadData();
             initializeApp();
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('sbkp_license');
-                localStorage.removeItem('sbkp_fingerprint');
-                location.reload();
-            }
         }
 
         // Data Management
@@ -1288,7 +1214,6 @@
             
             filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // Keep the header, update only the transaction rows
             const header = `
                 <div class="transaction-header">
                     <div></div>
@@ -1345,7 +1270,6 @@
             const ctx = document.getElementById('monthlyChart');
             if (!ctx) return;
             
-            // Get last 6 months
             const months = [];
             const now = new Date();
             for (let i = 5; i >= 0; i--) {
@@ -1607,7 +1531,6 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Header
             doc.setFontSize(20);
             doc.text('SmallBiz BookKeeping Pro', 20, 20);
             doc.setFontSize(12);
@@ -1618,7 +1541,6 @@
             let yPos = 55;
             
             if (reportType === 'income') {
-                // Income Statement
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
@@ -1683,7 +1605,6 @@
                 doc.text(`$${(totalIncome - totalExpenses).toFixed(2)}`, 170, yPos);
                 
             } else if (reportType === 'cashflow') {
-                // Cash Flow Report
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
@@ -1713,7 +1634,6 @@
                 doc.text(`$${(cashIn - cashOut).toFixed(2)}`, 170, yPos);
                 
             } else if (reportType === 'category') {
-                // Category Analysis
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
@@ -1751,7 +1671,6 @@
                 }
                 
             } else if (reportType === 'tax') {
-                // Tax Report
                 const year = parseInt(document.getElementById('taxYear').value);
                 const yearTransactions = APP.transactions.filter(t => new Date(t.date).getFullYear() === year);
                 
@@ -1807,7 +1726,6 @@
                 doc.text(`$${netProfit.toFixed(2)}`, 170, yPos);
             }
             
-            // Save the PDF
             doc.save(`${reportType}-report-${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
@@ -1857,7 +1775,6 @@
                     let importedData = [];
                     
                     if (fileName.endsWith('.csv')) {
-                        // Parse CSV
                         const text = e.target.result;
                         const lines = text.split('\n');
                         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
@@ -1875,38 +1792,28 @@
                             importedData.push(transaction);
                         }
                     } else {
-                        // Parse Excel
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         importedData = XLSX.utils.sheet_to_json(firstSheet);
                     }
                     
-                    // Process and validate imported data
                     let successCount = 0;
                     let errorCount = 0;
                     
                     importedData.forEach(row => {
                         try {
-                            // Parse and normalize date
                             let dateValue = row.date || row.Date || row.DATE || new Date().toISOString().split('T')[0];
                             
-                            // If date is a number (Excel serial date), convert it
                             if (typeof dateValue === 'number') {
-                                // Excel dates: serial number of days since 1900-01-01
-                                // Subtract 1 because Excel incorrectly treats 1900 as a leap year
-                                // Add 1 day offset for timezone
                                 const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
                                 dateValue = excelDate.toISOString().split('T')[0];
                             } else if (dateValue instanceof Date) {
-                                // If it's already a Date object
                                 dateValue = dateValue.toISOString().split('T')[0];
                             } else if (typeof dateValue === 'string') {
-                                // Check if it's already in YYYY-MM-DD format
                                 if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
                                     // Already in correct format
                                 } else {
-                                    // Try to parse string date
                                     const parsedDate = new Date(dateValue);
                                     if (!isNaN(parsedDate.getTime())) {
                                         dateValue = parsedDate.toISOString().split('T')[0];
@@ -1914,7 +1821,6 @@
                                 }
                             }
                             
-                            // Normalize field names
                             const transaction = {
                                 date: dateValue,
                                 type: (row.type || row.Type || row.TYPE || 'expense').toLowerCase(),
@@ -1924,18 +1830,15 @@
                                 notes: row.notes || row.Notes || row.NOTES || ''
                             };
                             
-                            // Validate required fields
                             if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
                                 errorCount++;
                                 return;
                             }
                             
-                            // Validate type
                             if (!['income', 'expense'].includes(transaction.type)) {
                                 transaction.type = 'expense';
                             }
                             
-                            // Validate category
                             const validCategories = [...APP.categories.income, ...APP.categories.expense];
                             if (!validCategories.includes(transaction.category)) {
                                 transaction.category = transaction.type === 'income' ? 'Other Income' : 'Other Expenses';
@@ -1949,10 +1852,7 @@
                         }
                     });
                     
-                    // Show results
                     alert(`Import complete!\n\nSuccessfully imported: ${successCount} transactions\nErrors: ${errorCount}`);
-                    
-                    // Reset file input
                     event.target.value = '';
                     
                 } catch (error) {
@@ -1994,21 +1894,22 @@
         }
 
         // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Check license on load
-            if (checkLicense()) {
+            if (await checkLicense()) {
                 showMainApp();
             }
             
             // License activation
-            document.getElementById('activateBtn').addEventListener('click', () => {
+            document.getElementById('activateBtn').addEventListener('click', async () => {
                 const key = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
-                activateLicense(key);
+                await activateLicense(key);
             });
             
-            document.getElementById('licenseKeyInput').addEventListener('keypress', (e) => {
+            document.getElementById('licenseKeyInput').addEventListener('keypress', async (e) => {
                 if (e.key === 'Enter') {
-                    document.getElementById('activateBtn').click();
+                    const key = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
+                    await activateLicense(key);
                 }
             });
             
@@ -2090,7 +1991,6 @@
             });
             
             document.getElementById('fileInput').addEventListener('change', handleFileImport);
-            
             document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
             
             // Reports
