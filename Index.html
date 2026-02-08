@@ -1225,16 +1225,6 @@
                         buyer: 'Kofi',
                         email: 'kobengasiedu@aarp.org',
                         generated: '2026-02-06T01:09:17.959Z'
-                    },
-                    'ECSG-CMN2-5WRS-9MPV': {
-                        type: 'SINGLE',
-                        deviceFingerprint: null,
-                        activatedAt: null,
-                        expiresAt: null,
-                        features: ['all'],
-                        buyer: 'Sarfo',
-                        email: 'lawyersarfo@yahoo.com',
-                        generated: '2026-02-07T19:37:25.582Z'
                     }
                 };
             }
@@ -2354,6 +2344,9 @@
                     
                     console.log('🔄 Processing', importedData.length, 'rows...');
                     
+                    // Disable verbose logging for large imports (>50 rows)
+                    const verboseLogging = importedData.length <= 50;
+                    
                     importedData.forEach((row, index) => {
                         try {
                             // Handle both uppercase and lowercase column names
@@ -2390,36 +2383,48 @@
                                 notes: (row.NOTES || row.Notes || row.notes || '').toString()
                             };
                             
-                            console.log(`📝 Row ${index + 2} parsed:`, {
-                                date: transaction.date,
-                                type: transaction.type,
-                                amount: transaction.amount,
-                                description: transaction.description
-                            });
+                            // Only log first 5 rows for large imports
+                            if (verboseLogging || index < 5) {
+                                console.log(`📝 Row ${index + 2} parsed:`, {
+                                    date: transaction.date,
+                                    type: transaction.type,
+                                    amount: transaction.amount,
+                                    description: transaction.description
+                                });
+                            }
                             
                             // Validation
                             if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
-                                console.warn(`⚠️ Row ${index + 2} skipped: Invalid date or amount`);
-                                console.warn('   Date:', transaction.date, '(type:', typeof transaction.date, ')');
-                                console.warn('   Amount:', transaction.amount, '(type:', typeof transaction.amount, ')');
-                                console.warn('   Raw row data:', row);
+                                if (verboseLogging) {
+                                    console.warn(`⚠️ Row ${index + 2} skipped: Invalid date or amount`);
+                                    console.warn('   Date:', transaction.date, '(type:', typeof transaction.date, ')');
+                                    console.warn('   Amount:', transaction.amount, '(type:', typeof transaction.amount, ')');
+                                    console.warn('   Raw row data:', row);
+                                }
                                 skippedRows.push(index + 2);
                                 errorCount++;
                                 return;
                             }
                             
                             if (!['income', 'expense'].includes(transaction.type)) {
-                                console.warn(`⚠️ Row ${index + 2}: Invalid type '${transaction.type}', defaulting to 'expense'`);
+                                if (verboseLogging) {
+                                    console.warn(`⚠️ Row ${index + 2}: Invalid type '${transaction.type}', defaulting to 'expense'`);
+                                }
                                 transaction.type = 'expense';
                             }
                             
                             const validCategories = [...APP.categories.income, ...APP.categories.expense];
                             if (!validCategories.includes(transaction.category)) {
-                                console.warn(`⚠️ Row ${index + 2}: Invalid category '${transaction.category}', using default`);
+                                if (verboseLogging) {
+                                    console.warn(`⚠️ Row ${index + 2}: Invalid category '${transaction.category}', using default`);
+                                }
                                 transaction.category = transaction.type === 'income' ? 'Other Income' : 'Other Expenses';
                             }
                             
-                            console.log(`✅ Row ${index + 2} imported:`, transaction);
+                            if (verboseLogging || (index < 5) || ((index + 1) % 50 === 0)) {
+                                console.log(`✅ Row ${index + 2} imported:`, transaction);
+                            }
+                            
                             addTransaction(transaction);
                             successCount++;
                         } catch (err) {
@@ -2429,16 +2434,24 @@
                         }
                     });
                     
-                    console.log('✅ Import complete!', {successCount, errorCount, skippedRows});
+                    console.log('✅ Import complete!', {successCount, errorCount, skippedRows: skippedRows.length});
+                    
+                    if (!verboseLogging && successCount > 0) {
+                        console.log(`📊 Imported ${successCount} transactions successfully`);
+                        console.log(`📈 Total transactions in app: ${APP.transactions.length}`);
+                    }
                     
                     let message = `Import complete!\n\n✅ Successfully imported: ${successCount} transactions`;
                     if (errorCount > 0) {
-                        message += `\n❌ Errors: ${errorCount}`;
-                        if (skippedRows.length > 0 && skippedRows.length <= 5) {
+                        message += `\n❌ Errors/Skipped: ${errorCount}`;
+                        if (skippedRows.length > 0 && skippedRows.length <= 10) {
                             message += `\n\nSkipped rows: ${skippedRows.join(', ')}`;
+                        } else if (skippedRows.length > 10) {
+                            message += `\n\nSkipped ${skippedRows.length} rows (check console for details)`;
                         }
                         message += `\n\nCheck browser console for details.`;
                     }
+                    message += `\n\nTotal transactions in app: ${APP.transactions.length}`;
                     
                     alert(message);
                     event.target.value = '';
