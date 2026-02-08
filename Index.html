@@ -2336,11 +2336,13 @@
                         
                         console.log('📊 Excel data loaded:', importedData.length, 'rows');
                         console.log('📋 First row sample:', importedData[0]);
+                        console.log('📋 Column names in first row:', Object.keys(importedData[0] || {}));
                     }
                     
                     let successCount = 0;
                     let errorCount = 0;
                     let skippedRows = [];
+                    let transactionsToAdd = []; // Batch transactions
                     
                     console.log('🔄 Processing', importedData.length, 'rows...');
                     
@@ -2349,9 +2351,41 @@
                     
                     importedData.forEach((row, index) => {
                         try {
-                            // Handle both uppercase and lowercase column names
-                            // More flexible column name matching (case-insensitive)
-                            let dateValue = row.DATE || row.Date || row.date || new Date().toISOString().split('T')[0];
+                            // Auto-detect column names (very flexible)
+                            const rowKeys = Object.keys(row);
+                            
+                            // Find date column (look for: date, DATE, Date, Transaction Date, etc.)
+                            const dateKey = rowKeys.find(k => 
+                                /date/i.test(k) || /fecha/i.test(k) || /datum/i.test(k)
+                            );
+                            
+                            // Find type column (look for: type, TYPE, Type, Transaction Type, etc.)
+                            const typeKey = rowKeys.find(k => 
+                                /type/i.test(k) || /tipo/i.test(k) || /art/i.test(k)
+                            );
+                            
+                            // Find category column
+                            const categoryKey = rowKeys.find(k => 
+                                /category/i.test(k) || /categor/i.test(k) || /class/i.test(k)
+                            );
+                            
+                            // Find description column
+                            const descKey = rowKeys.find(k => 
+                                /desc/i.test(k) || /detail/i.test(k) || /memo/i.test(k) || /narr/i.test(k) || /particulars/i.test(k)
+                            );
+                            
+                            // Find amount column
+                            const amountKey = rowKeys.find(k => 
+                                /amount/i.test(k) || /total/i.test(k) || /sum/i.test(k) || /value/i.test(k) || /price/i.test(k)
+                            );
+                            
+                            // Find notes column
+                            const notesKey = rowKeys.find(k => 
+                                /note/i.test(k) || /comment/i.test(k) || /remark/i.test(k)
+                            );
+                            
+                            // Get values using auto-detected keys
+                            let dateValue = row[dateKey] || row.DATE || row.Date || row.date || new Date().toISOString().split('T')[0];
                             
                             if (typeof dateValue === 'number') {
                                 const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
@@ -2376,11 +2410,11 @@
                             
                             const transaction = {
                                 date: dateValue,
-                                type: (row.TYPE || row.Type || row.type || 'expense').toString().toLowerCase().trim(),
-                                category: row.CATEGORY || row.Category || row.category || 'Other Expenses',
-                                description: row.DESCRIPTION || row.Description || row.description || 'Imported',
-                                amount: Math.abs(parseFloat(row.AMOUNT || row.Amount || row.amount || 0)), // Take absolute value
-                                notes: (row.NOTES || row.Notes || row.notes || '').toString()
+                                type: (row[typeKey] || row.TYPE || row.Type || row.type || 'expense').toString().toLowerCase().trim(),
+                                category: row[categoryKey] || row.CATEGORY || row.Category || row.category || 'Other Expenses',
+                                description: row[descKey] || row.DESCRIPTION || row.Description || row.description || 'Imported',
+                                amount: Math.abs(parseFloat(row[amountKey] || row.AMOUNT || row.Amount || row.amount || 0)),
+                                notes: (row[notesKey] || row.NOTES || row.Notes || row.notes || '').toString()
                             };
                             
                             // Only log first 5 rows for large imports
@@ -2389,17 +2423,20 @@
                                     date: transaction.date,
                                     type: transaction.type,
                                     amount: transaction.amount,
-                                    description: transaction.description
+                                    description: transaction.description,
+                                    detectedColumns: { dateKey, typeKey, categoryKey, descKey, amountKey, notesKey }
                                 });
                             }
                             
                             // Validation
-                            if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
-                                if (verboseLogging) {
-                                    console.warn(`⚠️ Row ${index + 2} skipped: Invalid date or amount`);
-                                    console.warn('   Date:', transaction.date, '(type:', typeof transaction.date, ')');
-                                    console.warn('   Amount:', transaction.amount, '(type:', typeof transaction.amount, ')');
-                                    console.warn('   Raw row data:', row);
+                            if (!transaction.date || !transaction.amount || transaction.amount <= 0 || isNaN(transaction.amount)) {
+                                if (verboseLogging || index < 10) {
+                                    console.warn(`⚠️ Row ${index + 2} VALIDATION FAILED:`);
+                                    console.warn('   ❌ Date valid?', !!transaction.date, '| Value:', transaction.date, '| Type:', typeof transaction.date);
+                                    console.warn('   ❌ Amount valid?', !!(transaction.amount && transaction.amount > 0 && !isNaN(transaction.amount)), '| Value:', transaction.amount, '| Type:', typeof transaction.amount);
+                                    console.warn('   📋 Available columns:', rowKeys);
+                                    console.warn('   📋 Detected columns:', { dateKey, typeKey, categoryKey, descKey, amountKey, notesKey });
+                                    console.warn('   📋 Raw row:', row);
                                 }
                                 skippedRows.push(index + 2);
                                 errorCount++;
@@ -2422,10 +2459,12 @@
                             }
                             
                             if (verboseLogging || (index < 5) || ((index + 1) % 50 === 0)) {
-                                console.log(`✅ Row ${index + 2} imported:`, transaction);
+                                console.log(`✅ Row ${index + 2} validated:`, transaction);
                             }
                             
-                            addTransaction(transaction);
+                            // Add to batch instead of calling addTransaction immediately
+                            transaction.id = Date.now().toString() + '-' + index;
+                            transactionsToAdd.push(transaction);
                             successCount++;
                         } catch (err) {
                             console.error(`❌ Error importing row ${index + 2}:`, row, err);
@@ -2433,6 +2472,13 @@
                             errorCount++;
                         }
                     });
+                    
+                    // Add all transactions at once
+                    console.log(`💾 Adding ${transactionsToAdd.length} transactions to app...`);
+                    APP.transactions.push(...transactionsToAdd);
+                    saveData();
+                    renderTransactions();
+                    updateDashboard();
                     
                     console.log('✅ Import complete!', {successCount, errorCount, skippedRows: skippedRows.length});
                     
