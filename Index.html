@@ -1114,6 +1114,11 @@
                     <div id="settingsSavedMessage" style="display: none; margin-top: 20px; padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border: 2px solid #10b981; font-weight: 500;">
                         ✅ Settings saved successfully!
                     </div>
+                    
+                    <div id="dataStatusInfo" style="margin-top: 20px; padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px solid #e2e8f0; font-size: 13px; line-height: 1.6;">
+                        <strong>📊 Data Status:</strong><br>
+                        <span id="dataStatusText">Loading...</span>
+                    </div>
                 </div>
             </section>
         </main>
@@ -1536,7 +1541,7 @@
         }
 
         function logout() {
-            if (confirm('Are you sure you want to logout?')) {
+            if (confirm('Are you sure you want to logout?\n\nYour data will be saved and available when you login again with this license.\n\nNote: Data is automatically deleted after 30 days of inactivity.')) {
                 licenseAuth.deactivateLicense();
                 location.reload();
             }
@@ -1552,21 +1557,87 @@
 
         // Data Management
         function saveData() {
-            localStorage.setItem('sbkp_transactions', JSON.stringify(APP.transactions));
-            localStorage.setItem('sbkp_settings', JSON.stringify(APP.businessSettings));
+            if (!APP.licenseKey) return;
+            
+            const dataPackage = {
+                transactions: APP.transactions,
+                settings: APP.businessSettings,
+                lastSaved: new Date().toISOString()
+            };
+            
+            // Store with license key prefix for isolation
+            localStorage.setItem(`sbkp_data_${APP.licenseKey}`, JSON.stringify(dataPackage));
+            
+            // Clean up old data from other licenses (older than 30 days)
+            cleanupOldData();
         }
 
         function loadData() {
-            const saved = localStorage.getItem('sbkp_transactions');
-            if (saved) {
-                APP.transactions = JSON.parse(saved);
-            }
+            if (!APP.licenseKey) return;
             
-            const savedSettings = localStorage.getItem('sbkp_settings');
-            if (savedSettings) {
-                APP.businessSettings = JSON.parse(savedSettings);
-                loadSettingsToForm();
+            const savedData = localStorage.getItem(`sbkp_data_${APP.licenseKey}`);
+            if (savedData) {
+                try {
+                    const dataPackage = JSON.parse(savedData);
+                    
+                    // Check if data is older than 30 days
+                    const lastSaved = new Date(dataPackage.lastSaved);
+                    const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
+                    
+                    if (daysSinceLastSave > 30) {
+                        console.log('⏰ Data is older than 30 days, clearing...');
+                        localStorage.removeItem(`sbkp_data_${APP.licenseKey}`);
+                        alert('Your data was inactive for over 30 days and has been cleared for security.');
+                        return;
+                    }
+                    
+                    // Load the data
+                    APP.transactions = dataPackage.transactions || [];
+                    APP.businessSettings = dataPackage.settings || {
+                        currency: 'USD',
+                        businessName: '',
+                        address: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                        phone: '',
+                        email: '',
+                        taxId: ''
+                    };
+                    loadSettingsToForm();
+                    
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                }
             }
+        }
+        
+        function cleanupOldData() {
+            // Find all license data keys in localStorage
+            const allKeys = Object.keys(localStorage);
+            const dataKeys = allKeys.filter(key => key.startsWith('sbkp_data_'));
+            
+            dataKeys.forEach(key => {
+                // Skip current license
+                if (key === `sbkp_data_${APP.licenseKey}`) return;
+                
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (data && data.lastSaved) {
+                        const lastSaved = new Date(data.lastSaved);
+                        const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
+                        
+                        // Delete if older than 30 days
+                        if (daysSinceLastSave > 30) {
+                            console.log(`🗑️ Removing old data for ${key} (${Math.floor(daysSinceLastSave)} days old)`);
+                            localStorage.removeItem(key);
+                        }
+                    }
+                } catch (error) {
+                    // Invalid data, remove it
+                    localStorage.removeItem(key);
+                }
+            });
         }
         
         function loadSettingsToForm() {
@@ -1625,6 +1696,42 @@
                 saveData();
                 updateDashboard();
                 renderTransactions();
+            }
+        }
+        
+        function updateDataStatus() {
+            const statusEl = document.getElementById('dataStatusText');
+            if (!statusEl || !APP.licenseKey) return;
+            
+            const savedData = localStorage.getItem(`sbkp_data_${APP.licenseKey}`);
+            if (!savedData) {
+                statusEl.innerHTML = 'No saved data yet. Start adding transactions!';
+                return;
+            }
+            
+            try {
+                const dataPackage = JSON.parse(savedData);
+                const lastSaved = new Date(dataPackage.lastSaved);
+                const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
+                const daysRemaining = Math.max(0, 30 - Math.floor(daysSinceLastSave));
+                
+                const transactionCount = dataPackage.transactions?.length || 0;
+                
+                let statusHTML = `
+                    Last saved: <strong>${lastSaved.toLocaleDateString()} at ${lastSaved.toLocaleTimeString()}</strong><br>
+                    Transactions stored: <strong>${transactionCount}</strong><br>
+                    Data expires in: <strong>${daysRemaining} days</strong>
+                `;
+                
+                if (daysRemaining < 7) {
+                    statusHTML += `<br><span style="color: #dc2626;">⚠️ Warning: Data will be auto-deleted in ${daysRemaining} days! Login to refresh.</span>`;
+                } else if (daysRemaining < 14) {
+                    statusHTML += `<br><span style="color: #f59e0b;">⏰ Reminder: Data expires in ${daysRemaining} days.</span>`;
+                }
+                
+                statusEl.innerHTML = statusHTML;
+            } catch (error) {
+                statusEl.innerHTML = 'Unable to load data status.';
             }
         }
         
@@ -2387,6 +2494,7 @@
             renderTransactions();
             populateCategoryFilter();
             setDefaultDates();
+            updateDataStatus();
         }
 
         function populateCategoryFilter() {
@@ -2436,6 +2544,11 @@
                     
                     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
                     document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
+                    
+                    // Update data status when viewing settings
+                    if (btn.dataset.tab === 'settings') {
+                        updateDataStatus();
+                    }
                 });
             });
             
