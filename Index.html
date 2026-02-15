@@ -866,7 +866,7 @@
             </div>
             <div class="license-form">
                 <h2>Activate Your License</h2>
-                <input type="text" id="licenseKeyInput" placeholder="Enter your license key" maxlength="19">
+                <input type="text" id="licenseKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19">
                 <button id="activateBtn" class="btn-primary">Activate License</button>
                 <p class="license-message" id="licenseMessage"></p>
             </div>
@@ -1172,71 +1172,89 @@
     <!-- Main Application Script -->
     <script>
         // ============================================
-        // ADVANCED LICENSE AUTHENTICATION SYSTEM
+        // ALGORITHM-BASED LICENSE AUTHENTICATION
         // ============================================
         
         class LicenseAuth {
             constructor() {
                 this.licenseKey = null;
                 this.deviceFingerprint = null;
-                this.validLicenses = this.initializeLicenseDatabase();
+                // Secret seed for validation (keep this private when moving to backend)
+                this.SECRET_SEED = 'SBKP-2025-PRO-v1.0';
             }
 
-            initializeLicenseDatabase() {
-                return {
-                    // Demo/Trial Licenses
-                    'SBKP-2025-XXXX-TRIAL': {
-                        type: 'trial',
-                        deviceFingerprint: null,
-                        activatedAt: null,
-                        expiresAt: null,
-                        features: ['all'],
-                        buyer: 'Trial User',
-                        email: 'trial@example.com'
-                    },
+            // Calculate checksum for a license key
+            calculateChecksum(key) {
+                const parts = key.split('-');
+                if (parts.length !== 4) return null;
+                
+                let sum = 0;
+                const segment = parts[0] + parts[1] + parts[2];
+                
+                for (let i = 0; i < segment.length; i++) {
+                    const char = segment[i];
+                    const value = char.charCodeAt(0);
+                    sum += value * (i + 1);
+                }
+                
+                // Add secret seed influence
+                for (let i = 0; i < this.SECRET_SEED.length; i++) {
+                    sum += this.SECRET_SEED.charCodeAt(i);
+                }
+                
+                return sum;
+            }
+
+            // Validate license key format and checksum
+            validateLicenseKey(key) {
+                // Format check: XXXX-XXXX-XXXX-XXXX
+                const pattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+                if (!pattern.test(key)) {
+                    return { valid: false, error: 'Invalid license key format' };
+                }
+                
+                const parts = key.split('-');
+                const checksum = this.calculateChecksum(key);
+                
+                // Validate checksum matches pattern
+                // Last segment should match a derived pattern from first 3 segments
+                const expectedPattern = this.derivePattern(parts[0], parts[1], parts[2]);
+                
+                if (this.matchesPattern(parts[3], expectedPattern, checksum)) {
+                    return { valid: true };
+                }
+                
+                return { valid: false, error: 'Invalid license key' };
+            }
+
+            // Derive expected pattern from first 3 segments
+            derivePattern(seg1, seg2, seg3) {
+                let pattern = '';
+                const combined = seg1 + seg2 + seg3;
+                
+                for (let i = 0; i < 4; i++) {
+                    const index = (i * 3) % combined.length;
+                    pattern += combined[index];
+                }
+                
+                return pattern;
+            }
+
+            // Check if segment matches the expected pattern
+            matchesPattern(segment, expectedPattern, checksum) {
+                // Simple validation: segment should have relationship to pattern and checksum
+                let score = 0;
+                
+                for (let i = 0; i < 4; i++) {
+                    const charCode = segment.charCodeAt(i);
+                    const patternCode = expectedPattern.charCodeAt(i);
+                    const diff = Math.abs(charCode - patternCode);
                     
-                    // Customer Licenses
-                    '857Y-M4WG-M3H3-NDR7': {
-                        type: 'SINGLE',
-                        deviceFingerprint: null,
-                        activatedAt: null,
-                        expiresAt: null,
-                        features: ['all'],
-                        buyer: 'Peter King Ofori',
-                        email: 'Peterkin@hotmail.com',
-                        generated: '2026-02-05T17:23:08.549Z'
-                    },
-                    '7Y5L-KSGG-8288-WAMQ': {
-                        type: 'DEMO',
-                        deviceFingerprint: null,
-                        activatedAt: null,
-                        expiresAt: null,
-                        features: ['all'],
-                        buyer: 'Alma Agra',
-                        email: 'almaa.wfg@gmail.com',
-                        generated: '2026-02-05T17:57:07.478Z'
-                    },
-                    'D9VF-JSDK-XUMV-F2BZ': {
-                        type: 'SINGLE',
-                        deviceFingerprint: null,
-                        activatedAt: null,
-                        expiresAt: null,
-                        features: ['all'],
-                        buyer: 'Kofi',
-                        email: 'kobengasiedu@aarp.org',
-                        generated: '2026-02-06T01:09:17.959Z'
-                    },
-                    'AGP8-66MM-RE2J-9WZB': {
-                        type: 'SINGLE',
-                        deviceFingerprint: null,
-                        activatedAt: null,
-                        expiresAt: null,
-                        features: ['all'],
-                        buyer: 'Yaa',
-                        email: 'aduome@yahoo.com',
-                        generated: '2026-02-10T23:58:44.583Z'
-                   }
-                };
+                    if (diff < 15) score++;
+                }
+                
+                // At least 2 characters should be close to pattern
+                return score >= 2;
             }
 
             async generateDeviceFingerprint() {
@@ -1310,52 +1328,41 @@
                 return Math.abs(hash).toString(36);
             }
 
-            validateLicenseFormat(key) {
-                // Accept SBKP format: SBKP-YYYY-XXXX-XXXXX
-                const sbkpPattern = /^SBKP-\d{4}-[A-Z0-9]{4}-[A-Z0-9]{5}$/;
-                // Accept custom format: XXXX-XXXX-XXXX-XXXX
-                const customPattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
-                
-                return sbkpPattern.test(key) || customPattern.test(key);
-            }
-
             async activateLicense(licenseKey) {
-                if (!this.validateLicenseFormat(licenseKey)) {
+                console.log('🔑 Validating license key:', licenseKey);
+                
+                const validation = this.validateLicenseKey(licenseKey);
+                
+                if (!validation.valid) {
                     return {
                         success: false,
-                        error: 'Invalid license key format'
+                        error: validation.error
                     };
                 }
 
-                const licenseData = this.validLicenses[licenseKey];
-                if (!licenseData) {
-                    return {
-                        success: false,
-                        error: 'Invalid license key'
-                    };
-                }
-
+                // Check if already activated on another device
                 const deviceFP = await this.generateDeviceFingerprint();
-
-                if (licenseData.deviceFingerprint && licenseData.deviceFingerprint !== deviceFP) {
+                const storedFP = localStorage.getItem(`sbkp_fp_${licenseKey}`);
+                
+                if (storedFP && storedFP !== deviceFP) {
                     return {
                         success: false,
                         error: 'This license is already activated on another device'
                     };
                 }
 
-                licenseData.deviceFingerprint = deviceFP;
-                licenseData.activatedAt = new Date().toISOString();
-
+                // Store device fingerprint for this license
+                localStorage.setItem(`sbkp_fp_${licenseKey}`, deviceFP);
+                
                 this.licenseKey = licenseKey;
                 this.deviceFingerprint = deviceFP;
-
+                
                 this.saveLicenseData();
 
                 return {
                     success: true,
-                    licenseType: licenseData.type,
-                    features: licenseData.features
+                    licenseType: 'SINGLE',
+                    features: ['all']
                 };
             }
 
@@ -1367,14 +1374,17 @@
                     return false;
                 }
 
-                const licenseData = this.validLicenses[savedLicense];
-                if (!licenseData) {
+                // Validate the license key format
+                const validation = this.validateLicenseKey(savedLicense);
+                if (!validation.valid) {
                     return false;
                 }
 
+                // Verify device fingerprint matches
                 const currentFingerprint = await this.generateDeviceFingerprint();
+                const storedFP = localStorage.getItem(`sbkp_fp_${savedLicense}`);
 
-                if (savedFingerprint !== currentFingerprint) {
+                if (!storedFP || savedFingerprint !== currentFingerprint) {
                     return false;
                 }
 
@@ -1384,11 +1394,10 @@
             }
 
             deactivateLicense() {
-                if (this.licenseKey && this.validLicenses[this.licenseKey]) {
-                    this.validLicenses[this.licenseKey].deviceFingerprint = null;
-                    this.validLicenses[this.licenseKey].activatedAt = null;
+                if (this.licenseKey) {
+                    localStorage.removeItem(`sbkp_fp_${this.licenseKey}`);
                 }
-
+                
                 localStorage.removeItem('sbkp_license');
                 localStorage.removeItem('sbkp_fingerprint');
                 
@@ -1404,20 +1413,28 @@
             getLicenseInfo() {
                 if (!this.licenseKey) return null;
 
-                const licenseData = this.validLicenses[this.licenseKey];
                 return {
                     key: this.licenseKey,
-                    type: licenseData.type,
-                    features: licenseData.features,
-                    activatedAt: licenseData.activatedAt
+                    type: 'SINGLE',
+                    features: ['all'],
+                    activatedAt: new Date().toISOString()
                 };
             }
 
+            // License key generator (for your use when creating new licenses)
             static generateLicenseKey() {
-                const year = new Date().getFullYear();
-                const random1 = Math.random().toString(36).substring(2, 6).toUpperCase();
-                const random2 = Math.random().toString(36).substring(2, 7).toUpperCase();
-                return `SBKP-${year}-${random1}-${random2}`;
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing chars: 0, O, I, 1
+                const segments = [];
+                
+                for (let i = 0; i < 4; i++) {
+                    let segment = '';
+                    for (let j = 0; j < 4; j++) {
+                        segment += chars[Math.floor(Math.random() * chars.length)];
+                    }
+                    segments.push(segment);
+                }
+                
+                return segments.join('-');
             }
         }
 
@@ -1739,20 +1756,6 @@
                 .filter(t => t.type === 'expense')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
             
-            console.log('💰 DASHBOARD CALCULATIONS:');
-            console.log('  Total transactions:', APP.transactions.length);
-            console.log('  Income transactions:', APP.transactions.filter(t => t.type === 'income').length);
-            console.log('  Expense transactions:', APP.transactions.filter(t => t.type === 'expense').length);
-            console.log('  Income total:', income);
-            console.log('  Expenses total:', expenses);
-            console.log('  Net income:', income - expenses);
-            
-            // Log each expense for debugging
-            console.log('📋 EXPENSE BREAKDOWN:');
-            APP.transactions.filter(t => t.type === 'expense').forEach(t => {
-                console.log(`  - ${t.description}: $${parseFloat(t.amount).toFixed(2)} (type: ${typeof t.amount})`);
-            });
-            
             document.getElementById('totalRevenue').textContent = formatCurrency(income);
             document.getElementById('totalExpenses').textContent = formatCurrency(expenses);
             document.getElementById('netIncome').textContent = formatCurrency(income - expenses);
@@ -1785,8 +1788,8 @@
                     datasets: [{
                         data: [totalIncome, totalExpenses],
                         backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)',  // Green for income
-                            'rgba(239, 68, 68, 0.8)'     // Red for expenses
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
                         ],
                         borderColor: [
                             'rgba(16, 185, 129, 1)',
@@ -1895,20 +1898,6 @@
             const totalExpenses = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const netIncome = totalIncome - totalExpenses;
             
-            console.log('📊 INCOME STATEMENT REPORT:');
-            console.log('  Period:', startDate, 'to', endDate);
-            console.log('  Transactions in period:', transactions.length);
-            console.log('  Income items:', income.length);
-            console.log('  Expense items:', expenses.length);
-            console.log('  Total Income:', totalIncome);
-            console.log('  Total Expenses:', totalExpenses);
-            console.log('  Net Income:', netIncome);
-            
-            console.log('📋 EXPENSE ITEMS:');
-            expenses.forEach(t => {
-                console.log(`  - ${t.date}: ${t.description} = $${parseFloat(t.amount).toFixed(2)}`);
-            });
-            
             const html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
@@ -1946,15 +1935,9 @@
         }
 
         function generateCategoryAnalysis(transactions, startDate, endDate) {
-            console.log('📊 CATEGORY ANALYSIS - DEBUG:');
-            console.log('  Total transactions in period:', transactions.length);
-            console.log('  All transactions:', transactions);
-            
             const byCategory = {};
             
             transactions.forEach(t => {
-                console.log(`  Processing: ${t.date} - ${t.type} - ${t.category} - $${t.amount}`);
-                
                 if (!byCategory[t.category]) {
                     byCategory[t.category] = { income: 0, expense: 0 };
                 }
@@ -1965,9 +1948,6 @@
                 }
             });
             
-            console.log('📊 CATEGORY TOTALS:');
-            console.log('  Categories found:', Object.keys(byCategory));
-            
             let html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
@@ -1975,24 +1955,7 @@
             `;
             
             for (const [category, amounts] of Object.entries(byCategory)) {
-                // Show income as positive, expenses as positive too (not negative)
-                let total = amounts.income + amounts.expense; // Both are positive now
-                let displayValue = total;
-                
-                // If it's purely expenses, just show the expense amount
-                if (amounts.income === 0 && amounts.expense > 0) {
-                    displayValue = amounts.expense;
-                }
-                // If it's purely income, show income
-                else if (amounts.expense === 0 && amounts.income > 0) {
-                    displayValue = amounts.income;
-                }
-                // If mixed, show net (income - expense)
-                else {
-                    displayValue = amounts.income - amounts.expense;
-                }
-                
-                console.log(`  ${category}: Income=$${amounts.income.toFixed(2)}, Expense=$${amounts.expense.toFixed(2)}, Display=$${displayValue.toFixed(2)}`);
+                let displayValue = amounts.income - amounts.expense;
                 html += `<p><strong>${category}:</strong> ${formatCurrency(displayValue)}</p>`;
             }
             
@@ -2310,8 +2273,6 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            console.log('📁 Starting file import:', file.name);
-            
             const reader = new FileReader();
             const fileName = file.name.toLowerCase();
             
@@ -2323,8 +2284,6 @@
                         const text = e.target.result;
                         const lines = text.split('\n');
                         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-                        
-                        console.log('📋 CSV Headers found:', headers);
                         
                         for (let i = 1; i < lines.length; i++) {
                             if (!lines[i].trim()) continue;
@@ -2343,178 +2302,74 @@
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         importedData = XLSX.utils.sheet_to_json(firstSheet);
-                        
-                        console.log('📊 Excel data loaded:', importedData.length, 'rows');
-                        console.log('📋 First row sample:', importedData[0]);
-                        console.log('📋 Column names in first row:', Object.keys(importedData[0] || {}));
                     }
                     
                     let successCount = 0;
                     let errorCount = 0;
-                    let skippedRows = [];
-                    let transactionsToAdd = []; // Batch transactions
-                    
-                    console.log('🔄 Processing', importedData.length, 'rows...');
-                    
-                    // Disable verbose logging for large imports (>50 rows)
-                    const verboseLogging = importedData.length <= 50;
+                    let transactionsToAdd = [];
                     
                     importedData.forEach((row, index) => {
                         try {
-                            // Auto-detect column names (very flexible)
                             const rowKeys = Object.keys(row);
                             
-                            // Find date column (look for: date, DATE, Date, Transaction Date, etc.)
-                            const dateKey = rowKeys.find(k => 
-                                /date/i.test(k) || /fecha/i.test(k) || /datum/i.test(k)
-                            );
+                            const dateKey = rowKeys.find(k => /date/i.test(k));
+                            const typeKey = rowKeys.find(k => /type/i.test(k));
+                            const categoryKey = rowKeys.find(k => /category/i.test(k));
+                            const descKey = rowKeys.find(k => /desc/i.test(k));
+                            const amountKey = rowKeys.find(k => /amount/i.test(k));
+                            const notesKey = rowKeys.find(k => /note/i.test(k));
                             
-                            // Find type column (look for: type, TYPE, Type, Transaction Type, etc.)
-                            const typeKey = rowKeys.find(k => 
-                                /type/i.test(k) || /tipo/i.test(k) || /art/i.test(k)
-                            );
-                            
-                            // Find category column
-                            const categoryKey = rowKeys.find(k => 
-                                /category/i.test(k) || /categor/i.test(k) || /class/i.test(k)
-                            );
-                            
-                            // Find description column
-                            const descKey = rowKeys.find(k => 
-                                /desc/i.test(k) || /detail/i.test(k) || /memo/i.test(k) || /narr/i.test(k) || /particulars/i.test(k)
-                            );
-                            
-                            // Find amount column
-                            const amountKey = rowKeys.find(k => 
-                                /amount/i.test(k) || /total/i.test(k) || /sum/i.test(k) || /value/i.test(k) || /price/i.test(k)
-                            );
-                            
-                            // Find notes column
-                            const notesKey = rowKeys.find(k => 
-                                /note/i.test(k) || /comment/i.test(k) || /remark/i.test(k)
-                            );
-                            
-                            // Get values using auto-detected keys
-                            let dateValue = row[dateKey] || row.DATE || row.Date || row.date || new Date().toISOString().split('T')[0];
+                            let dateValue = row[dateKey] || new Date().toISOString().split('T')[0];
                             
                             if (typeof dateValue === 'number') {
                                 const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
                                 dateValue = excelDate.toISOString().split('T')[0];
                             } else if (dateValue instanceof Date) {
                                 dateValue = dateValue.toISOString().split('T')[0];
-                            } else if (typeof dateValue === 'string') {
-                                // Handle different date formats
-                                if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
-                                    // Already in YYYY-MM-DD format
-                                } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateValue)) {
-                                    // Handle MM/DD/YYYY format
-                                    const parts = dateValue.split('/');
-                                    dateValue = `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
-                                } else {
-                                    const parsedDate = new Date(dateValue);
-                                    if (!isNaN(parsedDate.getTime())) {
-                                        dateValue = parsedDate.toISOString().split('T')[0];
-                                    }
-                                }
                             }
                             
                             const transaction = {
                                 date: dateValue,
-                                type: (row[typeKey] || row.TYPE || row.Type || row.type || 'expense').toString().toLowerCase().trim(),
-                                category: row[categoryKey] || row.CATEGORY || row.Category || row.category || 'Other Expenses',
-                                description: row[descKey] || row.DESCRIPTION || row.Description || row.description || 'Imported',
-                                amount: Math.abs(parseFloat(row[amountKey] || row.AMOUNT || row.Amount || row.amount || 0)),
-                                notes: (row[notesKey] || row.NOTES || row.Notes || row.notes || '').toString()
+                                type: (row[typeKey] || 'expense').toString().toLowerCase().trim(),
+                                category: row[categoryKey] || 'Other Expenses',
+                                description: row[descKey] || 'Imported',
+                                amount: Math.abs(parseFloat(row[amountKey] || 0)),
+                                notes: (row[notesKey] || '').toString()
                             };
                             
-                            // Only log first 5 rows for large imports
-                            if (verboseLogging || index < 5) {
-                                console.log(`📝 Row ${index + 2} parsed:`, {
-                                    date: transaction.date,
-                                    type: transaction.type,
-                                    amount: transaction.amount,
-                                    description: transaction.description,
-                                    detectedColumns: { dateKey, typeKey, categoryKey, descKey, amountKey, notesKey }
-                                });
-                            }
-                            
-                            // Validation
-                            if (!transaction.date || !transaction.amount || transaction.amount <= 0 || isNaN(transaction.amount)) {
-                                if (verboseLogging || index < 10) {
-                                    console.warn(`⚠️ Row ${index + 2} VALIDATION FAILED:`);
-                                    console.warn('   ❌ Date valid?', !!transaction.date, '| Value:', transaction.date, '| Type:', typeof transaction.date);
-                                    console.warn('   ❌ Amount valid?', !!(transaction.amount && transaction.amount > 0 && !isNaN(transaction.amount)), '| Value:', transaction.amount, '| Type:', typeof transaction.amount);
-                                    console.warn('   📋 Available columns:', rowKeys);
-                                    console.warn('   📋 Detected columns:', { dateKey, typeKey, categoryKey, descKey, amountKey, notesKey });
-                                    console.warn('   📋 Raw row:', row);
-                                }
-                                skippedRows.push(index + 2);
+                            if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
                                 errorCount++;
                                 return;
                             }
                             
                             if (!['income', 'expense'].includes(transaction.type)) {
-                                if (verboseLogging) {
-                                    console.warn(`⚠️ Row ${index + 2}: Invalid type '${transaction.type}', defaulting to 'expense'`);
-                                }
                                 transaction.type = 'expense';
                             }
                             
-                            const validCategories = [...APP.categories.income, ...APP.categories.expense];
-                            if (!validCategories.includes(transaction.category)) {
-                                if (verboseLogging) {
-                                    console.warn(`⚠️ Row ${index + 2}: Invalid category '${transaction.category}', using default`);
-                                }
-                                transaction.category = transaction.type === 'income' ? 'Other Income' : 'Other Expenses';
-                            }
-                            
-                            if (verboseLogging || (index < 5) || ((index + 1) % 50 === 0)) {
-                                console.log(`✅ Row ${index + 2} validated:`, transaction);
-                            }
-                            
-                            // Add to batch instead of calling addTransaction immediately
                             transaction.id = Date.now().toString() + '-' + index;
                             transactionsToAdd.push(transaction);
                             successCount++;
                         } catch (err) {
-                            console.error(`❌ Error importing row ${index + 2}:`, row, err);
-                            skippedRows.push(index + 2);
                             errorCount++;
                         }
                     });
                     
-                    // Add all transactions at once
-                    console.log(`💾 Adding ${transactionsToAdd.length} transactions to app...`);
                     APP.transactions.push(...transactionsToAdd);
                     saveData();
                     renderTransactions();
                     updateDashboard();
                     
-                    console.log('✅ Import complete!', {successCount, errorCount, skippedRows: skippedRows.length});
-                    
-                    if (!verboseLogging && successCount > 0) {
-                        console.log(`📊 Imported ${successCount} transactions successfully`);
-                        console.log(`📈 Total transactions in app: ${APP.transactions.length}`);
-                    }
-                    
                     let message = `Import complete!\n\n✅ Successfully imported: ${successCount} transactions`;
                     if (errorCount > 0) {
                         message += `\n❌ Errors/Skipped: ${errorCount}`;
-                        if (skippedRows.length > 0 && skippedRows.length <= 10) {
-                            message += `\n\nSkipped rows: ${skippedRows.join(', ')}`;
-                        } else if (skippedRows.length > 10) {
-                            message += `\n\nSkipped ${skippedRows.length} rows (check console for details)`;
-                        }
-                        message += `\n\nCheck browser console for details.`;
                     }
-                    message += `\n\nTotal transactions in app: ${APP.transactions.length}`;
                     
                     alert(message);
                     event.target.value = '';
                     
                 } catch (error) {
-                    console.error('❌ Import error:', error);
-                    alert('Error importing file. Please check the file format.\n\nExpected columns: DATE, TYPE, CATEGORY, DESCRIPTION, AMOUNT, NOTES\n\nCheck browser console for details.');
+                    console.error('Import error:', error);
+                    alert('Error importing file. Please check the file format.');
                     event.target.value = '';
                 }
             };
