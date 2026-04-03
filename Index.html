@@ -481,7 +481,6 @@
         }
         .action-btn {
             padding: 8px 14px;
-            border: none;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
@@ -718,7 +717,7 @@
         }
 
         /* ============================================
-           EXCEL AUTO-SYNC STYLES (ADDED)
+           EXCEL AUTO-SYNC STYLES
            ============================================ */
         .auto-sync-status {
             display: none;
@@ -797,7 +796,7 @@
         }
         .sync-stop-btn {
             padding: 5px 12px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--danger-color);
             border-radius: 7px;
             background: white;
             cursor: pointer;
@@ -805,7 +804,6 @@
             font-weight: 600;
             color: var(--danger-color);
             transition: all 0.2s ease;
-            border-color: var(--danger-color);
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
         .sync-stop-btn:hover {
@@ -828,7 +826,6 @@
             background: var(--primary-color);
             color: white;
         }
-        /* Auto-sync unsupported warning */
         .sync-unsupported {
             padding: 14px 18px;
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -848,37 +845,29 @@
                 gap: 16px;
                 text-align: center;
             }
-
             .main-nav {
                 overflow-x: auto;
             }
-
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-
             .transaction-header {
                 display: none;
             }
-
             .transaction-item {
                 grid-template-columns: 40px 1fr 100px;
                 gap: 12px;
             }
-
             .transaction-item .transaction-category,
             .transaction-item .transaction-description {
                 display: none;
             }
-
             .reports-grid {
                 grid-template-columns: 1fr;
             }
-
             .license-container {
                 padding: 32px;
             }
-
             .auto-sync-status {
                 flex-wrap: wrap;
             }
@@ -907,6 +896,7 @@
             </div>
         </div>
     </div>
+
     <!-- Main Application -->
     <div id="mainApp" class="main-app">
         <!-- Header -->
@@ -957,6 +947,7 @@
                     </div>
                 </div>
             </section>
+
             <!-- Transactions Tab -->
             <section id="transactionsTab" class="tab-content">
                 <div class="section-header">
@@ -981,17 +972,16 @@
                     <button id="exportSelectedBtn" class="btn-secondary">Export Selected</button>
                     <button id="importBtn" class="btn-primary">Import CSV/Excel</button>
                     <button id="downloadTemplateBtn" class="btn-secondary">Download Template</button>
-                    <!-- ADDED: Auto-Sync Excel button -->
                     <button id="autoSyncBtn" class="btn-primary">🔄 Auto-Sync Excel</button>
                     <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
                 </div>
 
-                <!-- ADDED: Browser support warning (shown if File System Access API unavailable) -->
+                <!-- Browser support warning (shown if File System Access API unavailable) -->
                 <div id="syncUnsupportedWarning" class="sync-unsupported">
                     ⚠️ <strong>Auto-Sync requires Chrome or Edge (v86+).</strong> Your current browser does not support the File System Access API needed for live Excel syncing. Please open this app in Chrome or Edge to use this feature.
                 </div>
 
-                <!-- ADDED: Auto-Sync status bar -->
+                <!-- Auto-Sync status bar -->
                 <div id="autoSyncStatus" class="auto-sync-status">
                     <span id="autoSyncDot" class="sync-dot sync-dot-idle"></span>
                     <span id="autoSyncFileName" class="sync-file-name"></span>
@@ -1020,6 +1010,7 @@
                     <!-- Header and transactions will be rendered here -->
                 </div>
             </section>
+
             <!-- Reports Tab -->
             <section id="reportsTab" class="tab-content">
                 <h2>Financial Reports</h2>
@@ -1052,6 +1043,7 @@
                     </div>
                 </div>
             </section>
+
             <!-- Tax Center Tab -->
             <section id="taxTab" class="tab-content">
                 <h2>Tax Center - Schedule C</h2>
@@ -1074,6 +1066,7 @@
                     <button id="exportTaxExcelBtn" class="btn-secondary">Export to Excel</button>
                 </div>
             </section>
+
             <!-- Settings Tab -->
             <section id="settingsTab" class="tab-content">
                 <h2>Business Settings</h2>
@@ -1176,6 +1169,7 @@
             </section>
         </main>
     </div>
+
     <!-- Transaction Modal -->
     <div id="transactionModal" class="modal">
         <div class="modal-content">
@@ -1220,12 +1214,12 @@
             </form>
         </div>
     </div>
+
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <!-- Main Application Script -->
     <script>
         // ============================================
         // ALGORITHM-BASED LICENSE AUTHENTICATION
@@ -1235,10 +1229,9 @@
             constructor() {
                 this.licenseKey = null;
                 this.deviceFingerprint = null;
-                // Secret seed for validation (keep this private when moving to backend)
                 this.SECRET_SEED = 'SBKP-2025-PRO-v1.0';
             }
-            // Calculate checksum for a license key
+
             calculateChecksum(key) {
                 const parts = key.split('-');
                 if (parts.length !== 4) return null;
@@ -1252,16 +1245,14 @@
                     sum += value * (i + 1);
                 }
 
-                // Add secret seed influence
                 for (let i = 0; i < this.SECRET_SEED.length; i++) {
                     sum += this.SECRET_SEED.charCodeAt(i);
                 }
 
                 return sum;
             }
-            // Validate license key format and checksum
+
             validateLicenseKey(key) {
-                // Format check: XXXX-XXXX-XXXX-XXXX
                 const pattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
                 if (!pattern.test(key)) {
                     return { valid: false, error: 'Invalid license key format' };
@@ -1269,9 +1260,6 @@
 
                 const parts = key.split('-');
                 const checksum = this.calculateChecksum(key);
-
-                // Validate checksum matches pattern
-                // Last segment should match a derived pattern from first 3 segments
                 const expectedPattern = this.derivePattern(parts[0], parts[1], parts[2]);
 
                 if (this.matchesPattern(parts[3], expectedPattern, checksum)) {
@@ -1280,7 +1268,7 @@
 
                 return { valid: false, error: 'Invalid license key' };
             }
-            // Derive expected pattern from first 3 segments
+
             derivePattern(seg1, seg2, seg3) {
                 let pattern = '';
                 const combined = seg1 + seg2 + seg3;
@@ -1292,9 +1280,8 @@
 
                 return pattern;
             }
-            // Check if segment matches the expected pattern
+
             matchesPattern(segment, expectedPattern, checksum) {
-                // Simple validation: segment should have relationship to pattern and checksum
                 let score = 0;
 
                 for (let i = 0; i < 4; i++) {
@@ -1305,9 +1292,9 @@
                     if (diff < 15) score++;
                 }
 
-                // At least 2 characters should be close to pattern
                 return score >= 2;
             }
+
             async generateDeviceFingerprint() {
                 const components = {
                     userAgent: navigator.userAgent,
@@ -1325,6 +1312,7 @@
                 const fingerprint = JSON.stringify(components);
                 return this.hashString(fingerprint);
             }
+
             async getCanvasFingerprint() {
                 try {
                     const canvas = document.createElement('canvas');
@@ -1348,6 +1336,7 @@
                     return 'canvas-unavailable';
                 }
             }
+
             getWebGLFingerprint() {
                 try {
                     const canvas = document.createElement('canvas');
@@ -1362,6 +1351,7 @@
                     return 'webgl-unavailable';
                 }
             }
+
             hashString(str) {
                 let hash = 0;
                 for (let i = 0; i < str.length; i++) {
@@ -1371,18 +1361,16 @@
                 }
                 return Math.abs(hash).toString(36);
             }
+
             async activateLicense(licenseKey) {
                 console.log('🔑 Validating license key:', licenseKey);
 
                 const validation = this.validateLicenseKey(licenseKey);
 
                 if (!validation.valid) {
-                    return {
-                        success: false,
-                        error: validation.error
-                    };
+                    return { success: false, error: validation.error };
                 }
-                // Check if already activated on another device
+
                 const deviceFP = await this.generateDeviceFingerprint();
                 const storedFP = localStorage.getItem(`sbkp_fp_${licenseKey}`);
 
@@ -1392,7 +1380,7 @@
                         error: 'This license is already activated on another device'
                     };
                 }
-                // Store device fingerprint for this license
+
                 localStorage.setItem(`sbkp_fp_${licenseKey}`, deviceFP);
 
                 this.licenseKey = licenseKey;
@@ -1405,42 +1393,39 @@
                     features: ['all']
                 };
             }
+
             async verifyLicense() {
                 const savedLicense = localStorage.getItem('sbkp_license');
                 const savedFingerprint = localStorage.getItem('sbkp_fingerprint');
-                if (!savedLicense || !savedFingerprint) {
-                    return false;
-                }
-                // Validate the license key format
+                if (!savedLicense || !savedFingerprint) return false;
+
                 const validation = this.validateLicenseKey(savedLicense);
-                if (!validation.valid) {
-                    return false;
-                }
-                // Verify device fingerprint matches
+                if (!validation.valid) return false;
+
                 const currentFingerprint = await this.generateDeviceFingerprint();
                 const storedFP = localStorage.getItem(`sbkp_fp_${savedLicense}`);
-                if (!storedFP || savedFingerprint !== currentFingerprint) {
-                    return false;
-                }
+                if (!storedFP || savedFingerprint !== currentFingerprint) return false;
+
                 this.licenseKey = savedLicense;
                 this.deviceFingerprint = savedFingerprint;
                 return true;
             }
+
             deactivateLicense() {
                 if (this.licenseKey) {
                     localStorage.removeItem(`sbkp_fp_${this.licenseKey}`);
                 }
-
                 localStorage.removeItem('sbkp_license');
                 localStorage.removeItem('sbkp_fingerprint');
-
                 this.licenseKey = null;
                 this.deviceFingerprint = null;
             }
+
             saveLicenseData() {
                 localStorage.setItem('sbkp_license', this.licenseKey);
                 localStorage.setItem('sbkp_fingerprint', this.deviceFingerprint);
             }
+
             getLicenseInfo() {
                 if (!this.licenseKey) return null;
                 return {
@@ -1450,9 +1435,9 @@
                     activatedAt: new Date().toISOString()
                 };
             }
-            // License key generator (for your use when creating new licenses)
+
             static generateLicenseKey() {
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing chars: 0, O, I, 1
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
                 const segments = [];
 
                 for (let i = 0; i < 4; i++) {
@@ -1466,24 +1451,21 @@
                 return segments.join('-');
             }
         }
+
         // ============================================
         // APPLICATION CODE
         // ============================================
 
-        // Helper: parse a YYYY-MM-DD date string as LOCAL midnight (not UTC midnight).
-        // new Date('2025-01-15') is UTC midnight, which shifts the display date back
-        // one day for users in timezones behind UTC (EST, CST, PST, etc.).
+        // Parse a YYYY-MM-DD date string as LOCAL midnight (not UTC midnight).
         function parseDateLocal(dateStr) {
             if (!dateStr) return new Date();
             const [yr, mo, dy] = dateStr.split('-').map(Number);
-            return new Date(yr, mo - 1, dy); // month is 0-indexed in JS
+            return new Date(yr, mo - 1, dy);
         }
 
-        // Helper function to format currency with commas
         function formatCurrency(amount) {
             const currency = APP.businessSettings.currency || 'USD';
 
-            // Currency locale mapping for proper formatting
             const localeMap = {
                 'USD': 'en-US', 'EUR': 'de-DE', 'GBP': 'en-GB', 'CAD': 'en-CA',
                 'AUD': 'en-AU', 'JPY': 'ja-JP', 'CNY': 'zh-CN', 'INR': 'en-IN',
@@ -1531,9 +1513,9 @@
             chart: null,
             editingTransactionId: null
         };
-        // Initialize Advanced License System
+
         const licenseAuth = new LicenseAuth();
-        // License Management Functions
+
         async function activateLicense(licenseKey) {
             console.log('🔑 Attempting to activate license:', licenseKey);
             const messageEl = document.getElementById('licenseMessage');
@@ -1545,12 +1527,9 @@
                 if (result.success) {
                     messageEl.textContent = 'License activated successfully!';
                     messageEl.className = 'license-message success';
-
                     APP.licenseKey = licenseKey;
 
-                    setTimeout(() => {
-                        showMainApp();
-                    }, 1000);
+                    setTimeout(() => { showMainApp(); }, 1000);
                 } else {
                     messageEl.textContent = result.error;
                     messageEl.className = 'license-message error';
@@ -1561,6 +1540,7 @@
                 messageEl.className = 'license-message error';
             }
         }
+
         async function checkLicense() {
             const isValid = await licenseAuth.verifyLicense();
             if (isValid) {
@@ -1568,13 +1548,15 @@
             }
             return isValid;
         }
+
         function logout() {
             if (confirm('Are you sure you want to logout?\n\nYour data will be saved and available when you login again with this license.\n\nNote: Data is automatically deleted after 30 days of inactivity.')) {
-                ExcelSync.stop(); // Stop any active sync before logout
+                ExcelSync.stop();
                 licenseAuth.deactivateLicense();
                 location.reload();
             }
         }
+
         function showMainApp() {
             document.getElementById('licenseScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'flex';
@@ -1582,7 +1564,7 @@
             loadData();
             initializeApp();
         }
-        // Data Management
+
         function saveData() {
             if (!APP.licenseKey) return;
 
@@ -1592,12 +1574,10 @@
                 lastSaved: new Date().toISOString()
             };
 
-            // Store with license key prefix for isolation
             localStorage.setItem(`sbkp_data_${APP.licenseKey}`, JSON.stringify(dataPackage));
-
-            // Clean up old data from other licenses (older than 30 days)
             cleanupOldData();
         }
+
         function loadData() {
             if (!APP.licenseKey) return;
 
@@ -1605,8 +1585,6 @@
             if (savedData) {
                 try {
                     const dataPackage = JSON.parse(savedData);
-
-                    // Check if data is older than 30 days
                     const lastSaved = new Date(dataPackage.lastSaved);
                     const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
 
@@ -1617,21 +1595,12 @@
                         return;
                     }
 
-                    // Load the data
                     APP.transactions = dataPackage.transactions || [];
                     APP.businessSettings = dataPackage.settings || {
-                        currency: 'USD',
-                        businessName: '',
-                        address: '',
-                        city: '',
-                        state: '',
-                        zip: '',
-                        phone: '',
-                        email: '',
-                        taxId: ''
+                        currency: 'USD', businessName: '', address: '',
+                        city: '', state: '', zip: '', phone: '', email: '', taxId: ''
                     };
                     loadSettingsToForm();
-
                 } catch (error) {
                     console.error('Error loading data:', error);
                 }
@@ -1639,12 +1608,10 @@
         }
 
         function cleanupOldData() {
-            // Find all license data keys in localStorage
             const allKeys = Object.keys(localStorage);
             const dataKeys = allKeys.filter(key => key.startsWith('sbkp_data_'));
 
             dataKeys.forEach(key => {
-                // Skip current license
                 if (key === `sbkp_data_${APP.licenseKey}`) return;
 
                 try {
@@ -1653,14 +1620,12 @@
                         const lastSaved = new Date(data.lastSaved);
                         const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
 
-                        // Delete if older than 30 days
                         if (daysSinceLastSave > 30) {
                             console.log(`🗑️ Removing old data for ${key} (${Math.floor(daysSinceLastSave)} days old)`);
                             localStorage.removeItem(key);
                         }
                     }
                 } catch (error) {
-                    // Invalid data, remove it
                     localStorage.removeItem(key);
                 }
             });
@@ -1692,31 +1657,19 @@
             };
 
             saveData();
-
-            // Refresh dashboard to show new currency
             updateDashboard();
             renderTransactions();
 
-            // Show success message
             const messageEl = document.getElementById('settingsSavedMessage');
             messageEl.style.display = 'block';
-            setTimeout(() => {
-                messageEl.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { messageEl.style.display = 'none'; }, 3000);
         }
 
         function clearSettings() {
             if (confirm('Are you sure you want to clear all business settings?')) {
                 APP.businessSettings = {
-                    currency: 'USD',
-                    businessName: '',
-                    address: '',
-                    city: '',
-                    state: '',
-                    zip: '',
-                    phone: '',
-                    email: '',
-                    taxId: ''
+                    currency: 'USD', businessName: '', address: '',
+                    city: '', state: '', zip: '', phone: '', email: '', taxId: ''
                 };
                 loadSettingsToForm();
                 saveData();
@@ -1740,7 +1693,6 @@
                 const lastSaved = new Date(dataPackage.lastSaved);
                 const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
                 const daysRemaining = Math.max(0, 30 - Math.floor(daysSinceLastSave));
-
                 const transactionCount = dataPackage.transactions?.length || 0;
 
                 let statusHTML = `
@@ -1763,9 +1715,7 @@
 
         function getBusinessHeader() {
             const s = APP.businessSettings;
-            if (!s.businessName && !s.address) {
-                return '';
-            }
+            if (!s.businessName && !s.address) return '';
 
             let header = '';
             if (s.businessName) header += s.businessName + '\n';
@@ -1781,6 +1731,7 @@
 
             return header;
         }
+
         // Transaction Management
         function addTransaction(transaction) {
             transaction.id = Date.now().toString();
@@ -1789,6 +1740,7 @@
             renderTransactions();
             updateDashboard();
         }
+
         function updateTransaction(id, transaction) {
             const index = APP.transactions.findIndex(t => t.id === id);
             if (index !== -1) {
@@ -1799,6 +1751,7 @@
                 updateDashboard();
             }
         }
+
         function deleteTransaction(id) {
             if (confirm('Are you sure you want to delete this transaction?')) {
                 APP.transactions = APP.transactions.filter(t => t.id !== id);
@@ -1807,6 +1760,7 @@
                 updateDashboard();
             }
         }
+
         function deleteSelectedTransactions() {
             const checkboxes = document.querySelectorAll('.transaction-checkbox:checked');
             if (checkboxes.length === 0) {
@@ -1823,6 +1777,7 @@
                 updateDashboard();
             }
         }
+
         // Rendering
         function renderTransactions() {
             const container = document.getElementById('transactionsList');
@@ -1874,6 +1829,7 @@
 
             container.innerHTML = header + rows;
         }
+
         function updateDashboard() {
             const income = APP.transactions
                 .filter(t => t.type === 'income')
@@ -1890,11 +1846,11 @@
 
             updateChart();
         }
+
         function updateChart() {
             const ctx = document.getElementById('monthlyChart');
             if (!ctx) return;
 
-            // Calculate total income and expenses across all transactions
             const totalIncome = APP.transactions
                 .filter(t => t.type === 'income')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -1932,10 +1888,7 @@
                         legend: {
                             position: 'top',
                             labels: {
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                },
+                                font: { size: 14, weight: 'bold' },
                                 padding: 15
                             }
                         },
@@ -1954,6 +1907,7 @@
                 }
             });
         }
+
         // Modal Management
         function showTransactionModal(transactionId = null) {
             const modal = document.getElementById('transactionModal');
@@ -1980,18 +1934,22 @@
 
             modal.classList.add('show');
         }
+
         function hideTransactionModal() {
             document.getElementById('transactionModal').classList.remove('show');
             APP.editingTransactionId = null;
         }
+
         function updateCategoryOptions(type) {
             const categorySelect = document.getElementById('txCategory');
             const categories = APP.categories[type] || [];
             categorySelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
+
         function editTransaction(id) {
             showTransactionModal(id);
         }
+
         // Reports
         function generateReports() {
             const startDate = document.getElementById('reportStartDate').value;
@@ -2002,24 +1960,22 @@
                 return;
             }
 
-            const filtered = APP.transactions.filter(t => {
-                return t.date >= startDate && t.date <= endDate;
-            });
+            const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
 
             generateIncomeStatement(filtered, startDate, endDate);
             generateCashFlow(filtered, startDate, endDate);
             generateCategoryAnalysis(filtered, startDate, endDate);
         }
+
         function generateIncomeStatement(transactions, startDate, endDate) {
             const income = transactions.filter(t => t.type === 'income');
             const expenses = transactions.filter(t => t.type === 'expense');
-
             const totalIncome = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const totalExpenses = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const netIncome = totalIncome - totalExpenses;
 
-            const html = `
-                <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
+            document.getElementById('incomeStatement').innerHTML = `
+                <div style="font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
                     <hr style="margin: 16px 0;">
                     <p><strong>Total Income:</strong> ${formatCurrency(totalIncome)}</p>
@@ -2028,19 +1984,15 @@
                     <p style="font-size: 16px;"><strong>Net Income:</strong> ${formatCurrency(netIncome)}</p>
                 </div>
             `;
-
-            document.getElementById('incomeStatement').innerHTML = html;
         }
-        function generateCashFlow(transactions, startDate, endDate) {
-            const income = transactions.filter(t => t.type === 'income');
-            const expenses = transactions.filter(t => t.type === 'expense');
 
-            const cashIn = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            const cashOut = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        function generateCashFlow(transactions, startDate, endDate) {
+            const cashIn = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const cashOut = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const netCash = cashIn - cashOut;
 
-            const html = `
-                <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
+            document.getElementById('cashFlow').innerHTML = `
+                <div style="font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
                     <hr style="margin: 16px 0;">
                     <p><strong>Cash In:</strong> ${formatCurrency(cashIn)}</p>
@@ -2049,9 +2001,8 @@
                     <p style="font-size: 16px;"><strong>Net Cash Flow:</strong> ${formatCurrency(netCash)}</p>
                 </div>
             `;
-
-            document.getElementById('cashFlow').innerHTML = html;
         }
+
         function generateCategoryAnalysis(transactions, startDate, endDate) {
             const byCategory = {};
 
@@ -2067,7 +2018,7 @@
             });
 
             let html = `
-                <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
+                <div style="font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
                     <hr style="margin: 16px 0;">
             `;
@@ -2080,6 +2031,7 @@
             html += '</div>';
             document.getElementById('categoryAnalysis').innerHTML = html;
         }
+
         // Tax Center
         function generateTaxSummary() {
             const year = parseInt(document.getElementById('taxYear').value);
@@ -2106,7 +2058,7 @@
             const netProfit = totalIncome - totalExpenses;
 
             let html = `
-                <div style="font-family: 'Roboto Mono', monospace;">
+                <div style="font-family: monospace;">
                     <h3>Schedule C - Tax Year ${year}</h3>
                     <hr style="margin: 16px 0;">
                     <h4>Gross Income</h4>
@@ -2129,14 +2081,13 @@
 
             document.getElementById('taxSummary').innerHTML = html;
         }
+
         // Export Functions
         function exportToPDF(reportType) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-
             let yPos = 20;
 
-            // Add business header if available
             const businessHeader = getBusinessHeader();
             if (businessHeader) {
                 doc.setFontSize(10);
@@ -2150,7 +2101,6 @@
                 doc.setFont(undefined, 'normal');
             }
 
-            // Header
             doc.setFontSize(20);
             doc.text('SmallBiz BookKeeping Pro', 20, yPos);
             yPos += 7;
@@ -2166,7 +2116,6 @@
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
-
                 const income = filtered.filter(t => t.type === 'income');
                 const expenses = filtered.filter(t => t.type === 'expense');
                 const totalIncome = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
@@ -2186,10 +2135,7 @@
 
                 doc.setFontSize(10);
                 income.forEach(t => {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
+                    if (yPos > 270) { doc.addPage(); yPos = 20; }
                     doc.text(`  ${t.date} - ${t.description}`, 20, yPos);
                     doc.text(`$${parseFloat(t.amount).toFixed(2)}`, 170, yPos);
                     yPos += 5;
@@ -2207,10 +2153,7 @@
 
                 doc.setFontSize(10);
                 expenses.forEach(t => {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
+                    if (yPos > 270) { doc.addPage(); yPos = 20; }
                     doc.text(`  ${t.date} - ${t.description}`, 20, yPos);
                     doc.text(`$${parseFloat(t.amount).toFixed(2)}`, 170, yPos);
                     yPos += 5;
@@ -2230,7 +2173,6 @@
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
-
                 const cashIn = filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
                 const cashOut = filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
@@ -2262,14 +2204,9 @@
 
                 const byCategory = {};
                 filtered.forEach(t => {
-                    if (!byCategory[t.category]) {
-                        byCategory[t.category] = { income: 0, expense: 0 };
-                    }
-                    if (t.type === 'income') {
-                        byCategory[t.category].income += parseFloat(t.amount);
-                    } else {
-                        byCategory[t.category].expense += parseFloat(t.amount);
-                    }
+                    if (!byCategory[t.category]) byCategory[t.category] = { income: 0, expense: 0 };
+                    if (t.type === 'income') byCategory[t.category].income += parseFloat(t.amount);
+                    else byCategory[t.category].expense += parseFloat(t.amount);
                 });
 
                 doc.setFontSize(16);
@@ -2282,10 +2219,7 @@
 
                 doc.setFontSize(11);
                 for (const [category, amounts] of Object.entries(byCategory)) {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
+                    if (yPos > 270) { doc.addPage(); yPos = 20; }
                     const total = amounts.income - amounts.expense;
                     doc.text(`${category}:`, 20, yPos);
                     doc.text(`$${total.toFixed(2)}`, 170, yPos);
@@ -2294,15 +2228,12 @@
 
             } else if (reportType === 'tax') {
                 const year = parseInt(document.getElementById('taxYear').value);
-                const yearTransactions = APP.transactions.filter(t => new Date(t.date).getFullYear() === year);
-
+                const yearTransactions = APP.transactions.filter(t => parseDateLocal(t.date).getFullYear() === year);
                 const totalIncome = yearTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
 
                 const expensesByCategory = {};
                 yearTransactions.filter(t => t.type === 'expense').forEach(t => {
-                    if (!expensesByCategory[t.category]) {
-                        expensesByCategory[t.category] = 0;
-                    }
+                    if (!expensesByCategory[t.category]) expensesByCategory[t.category] = 0;
                     expensesByCategory[t.category] += parseFloat(t.amount);
                 });
 
@@ -2328,10 +2259,7 @@
 
                 doc.setFontSize(10);
                 for (const [category, amount] of Object.entries(expensesByCategory)) {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
+                    if (yPos > 270) { doc.addPage(); yPos = 20; }
                     doc.text(`${category}:`, 20, yPos);
                     doc.text(`$${amount.toFixed(2)}`, 170, yPos);
                     yPos += 6;
@@ -2350,31 +2278,19 @@
 
             doc.save(`${reportType}-report-${new Date().toISOString().split('T')[0]}.pdf`);
         }
+
         function exportToExcel() {
             const ws = XLSX.utils.json_to_sheet(APP.transactions);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
             XLSX.writeFile(wb, 'transactions.xlsx');
         }
+
         // Import Functions
         function downloadTemplate() {
             const template = [
-                {
-                    date: '2025-02-06',
-                    type: 'income',
-                    category: 'Sales',
-                    description: 'Sample income transaction',
-                    amount: 1000.00,
-                    notes: 'Optional notes field'
-                },
-                {
-                    date: '2025-02-06',
-                    type: 'expense',
-                    category: 'Office Expense',
-                    description: 'Sample expense transaction',
-                    amount: 150.00,
-                    notes: 'Optional notes field'
-                }
+                { date: '2025-02-06', type: 'income', category: 'Sales', description: 'Sample income transaction', amount: 1000.00, notes: 'Optional notes field' },
+                { date: '2025-02-06', type: 'expense', category: 'Office Expense', description: 'Sample expense transaction', amount: 150.00, notes: 'Optional notes field' }
             ];
 
             const ws = XLSX.utils.json_to_sheet(template);
@@ -2405,26 +2321,25 @@
                             const values = lines[i].split(',');
                             const transaction = {};
 
+                            // FIX: console.log moved outside the headers loop
                             headers.forEach((header, index) => {
                                 transaction[header] = values[index]?.trim() || '';
-                                console.log("CSV ROWS DETECTED:", importedData.length);
                             });
 
                             importedData.push(transaction);
                         }
-                        console.log("TOTAL LINES IN FILE:", lines.length);
-                        console.log("CSV ROWS DETECTED:", importedData.length);
+
+                        console.log('TOTAL LINES IN FILE:', lines.length);
+                        console.log('CSV ROWS DETECTED:', importedData.length);
                     } else {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array', sheetRows: 10001 });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        // Expand the sheet's used-range to 10 000 rows so XLSX does not
-                        // silently stop at whatever !ref the file declares internally.
-                    importedData = XLSX.utils.sheet_to_json(firstSheet, {
-    defval: '',
-    raw: false,
-    range: 0 // force full sheet read
-});
+                        importedData = XLSX.utils.sheet_to_json(firstSheet, {
+                            defval: '',
+                            raw: false,
+                            range: 0
+                        });
                     }
 
                     let successCount = 0;
@@ -2435,19 +2350,16 @@
                         try {
                             const rowKeys = Object.keys(row);
 
-                            const dateKey = rowKeys.find(k => /date/i.test(k));
-                            const typeKey = rowKeys.find(k => /type/i.test(k));
+                            const dateKey     = rowKeys.find(k => /date/i.test(k));
+                            const typeKey     = rowKeys.find(k => /type/i.test(k));
                             const categoryKey = rowKeys.find(k => /category/i.test(k));
-                            const descKey = rowKeys.find(k => /desc/i.test(k));
-                            const amountKey = rowKeys.find(k => /amount/i.test(k));
-                            const notesKey = rowKeys.find(k => /note/i.test(k));
+                            const descKey     = rowKeys.find(k => /desc/i.test(k));
+                            const amountKey   = rowKeys.find(k => /amount/i.test(k));
+                            const notesKey    = rowKeys.find(k => /note/i.test(k));
 
                             let dateValue = row[dateKey] || new Date().toISOString().split('T')[0];
 
                             if (typeof dateValue === 'number') {
-                                // Convert Excel serial to UTC timestamp, then read UTC
-                                // date components. getUTC* avoids local timezone shifting
-                                // the date backward for users west of UTC (EST, CST, PST).
                                 const d = new Date((dateValue - 25569) * 86400 * 1000);
                                 const yr = d.getUTCFullYear();
                                 const mo = String(d.getUTCMonth() + 1).padStart(2, '0');
@@ -2514,16 +2426,16 @@
         }
 
         // ============================================
-        // EXCEL AUTO-SYNC (ADDED)
+        // EXCEL AUTO-SYNC
         // Uses the File System Access API to watch an
         // Excel file and automatically reload data
         // whenever the file changes on disk.
         // Supported in Chrome/Edge v86+.
         // ============================================
         const ExcelSync = {
-            fileHandle: null,    // FileSystemFileHandle
-            intervalId: null,    // setInterval ID
-            lastModified: null,  // timestamp of last read file
+            fileHandle: null,
+            intervalId: null,
+            lastModified: null,
             isRunning: false,
 
             // Parse rows from a workbook into transaction objects
@@ -2545,9 +2457,6 @@
 
                         let dateValue = row[dateKey] || new Date().toISOString().split('T')[0];
                         if (typeof dateValue === 'number') {
-                            // Convert Excel serial to UTC timestamp, then read UTC
-                            // date components. getUTC* avoids local timezone shifting
-                            // the date backward for users west of UTC (EST, CST, PST).
                             const d = new Date((dateValue - 25569) * 86400 * 1000);
                             const yr  = d.getUTCFullYear();
                             const mo  = String(d.getUTCMonth() + 1).padStart(2, '0');
@@ -2569,7 +2478,6 @@
                         if (!['income', 'expense'].includes(type)) type = 'expense';
 
                         transactions.push({
-                            // Prefer an existing ID column so rows are stable across syncs
                             id: row[idKey] ? row[idKey].toString() : `sync-${index}-${dateValue}`,
                             date: dateValue,
                             type,
@@ -2586,14 +2494,13 @@
                 return { transactions, errorCount };
             },
 
-            // Read the linked file and update the app
+            // FIX: assign importedData from sheet_to_json; capture mode from the dropdown
             async readAndSync() {
                 if (!this.fileHandle) return;
 
                 try {
                     const file = await this.fileHandle.getFile();
 
-                    // Skip if file hasn't changed since last read
                     if (this.lastModified !== null && file.lastModified === this.lastModified) {
                         this.updateStatus('idle', `No changes — Last checked: ${new Date().toLocaleTimeString()}`);
                         return;
@@ -2605,25 +2512,33 @@
                     const arrayBuffer = await file.arrayBuffer();
                     const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array', sheetRows: 10001 });
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    // Expand the sheet's used-range to 10 000 rows so XLSX does not
-                    // silently stop at whatever !ref the file declares internally.
+
                     if (firstSheet['!ref']) {
                         const ref = XLSX.utils.decode_range(firstSheet['!ref']);
                         ref.e.r = Math.max(ref.e.r, 10000);
                         firstSheet['!ref'] = XLSX.utils.encode_range(ref);
                     }
-                    console.log("ROWS FROM EXCEL:", importedData.length);
+
+                    // FIX 1: importedData was undefined — now properly assigned
+                    const importedData = XLSX.utils.sheet_to_json(firstSheet, {
+                        defval: '',
+                        raw: false,
+                        range: 0
+                    });
+
+                    console.log('ROWS FROM EXCEL:', importedData.length);
 
                     const { transactions: newRows, errorCount } = this.parseRows(importedData);
 
-                    console.log("VALID TRANSACTIONS:", newRows.length);
-                    console.log("ROWS SKIPPED:", errorCount);
+                    console.log('VALID TRANSACTIONS:', newRows.length);
+                    console.log('ROWS SKIPPED:', errorCount);
+
+                    // FIX 2: mode was undefined — now read from the dropdown
+                    const mode = document.getElementById('syncMode').value;
 
                     if (mode === 'replace') {
-                        // Replace all existing transactions with the file contents
                         APP.transactions = newRows;
                     } else {
-                        // Merge: add only rows whose ID doesn't already exist
                         const existingIds = new Set(APP.transactions.map(t => t.id));
                         const toAdd = newRows.filter(r => !existingIds.has(r.id));
                         APP.transactions.push(...toAdd);
@@ -2648,7 +2563,6 @@
                 }
             },
 
-            // Start auto-sync: open file picker then begin polling
             async start() {
                 if (!('showOpenFilePicker' in window)) {
                     document.getElementById('syncUnsupportedWarning').style.display = 'block';
@@ -2677,22 +2591,18 @@
                 this.isRunning = true;
                 this.lastModified = null;
 
-                // Show status bar and update button label
                 document.getElementById('autoSyncStatus').style.display = 'flex';
                 document.getElementById('autoSyncFileName').textContent = this.fileHandle.name;
                 document.getElementById('autoSyncBtn').textContent = '⏹ Stop Auto-Sync';
                 document.getElementById('autoSyncBtn').classList.remove('btn-primary');
                 document.getElementById('autoSyncBtn').classList.add('btn-danger');
 
-                // Immediate first sync
                 await this.readAndSync();
 
-                // Begin polling at the chosen interval
                 const seconds = parseInt(document.getElementById('syncInterval').value) || 30;
                 this.intervalId = setInterval(() => this.readAndSync(), seconds * 1000);
             },
 
-            // Stop auto-sync and reset UI
             stop() {
                 if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
                 this.isRunning   = false;
@@ -2707,7 +2617,6 @@
                 this.updateStatus('idle', '');
             },
 
-            // Update the status bar dot + text
             updateStatus(state, message) {
                 const dot  = document.getElementById('autoSyncDot');
                 const text = document.getElementById('autoSyncStatusText');
@@ -2715,8 +2624,12 @@
 
                 text.textContent = message;
                 dot.className = 'sync-dot';
-                const map = { idle: 'sync-dot-idle', syncing: 'sync-dot-syncing',
-                              success: 'sync-dot-success', error: 'sync-dot-error' };
+                const map = {
+                    idle: 'sync-dot-idle',
+                    syncing: 'sync-dot-syncing',
+                    success: 'sync-dot-success',
+                    error: 'sync-dot-error'
+                };
                 dot.classList.add(map[state] || 'sync-dot-idle');
             }
         };
@@ -2729,17 +2642,18 @@
             setDefaultDates();
             updateDataStatus();
 
-            // Show browser-support warning immediately if API is absent
             if (!('showOpenFilePicker' in window)) {
                 document.getElementById('syncUnsupportedWarning').style.display = 'block';
             }
         }
+
         function populateCategoryFilter() {
             const select = document.getElementById('filterCategory');
             const allCategories = [...APP.categories.income, ...APP.categories.expense];
             select.innerHTML = '<option value="all">All Categories</option>' +
                 allCategories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
+
         function setDefaultDates() {
             const now = new Date();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -2748,14 +2662,13 @@
             document.getElementById('reportStartDate').value = firstDay.toISOString().split('T')[0];
             document.getElementById('reportEndDate').value = lastDay.toISOString().split('T')[0];
         }
+
         // Event Listeners
         document.addEventListener('DOMContentLoaded', async () => {
-            // Check license on load
             if (await checkLicense()) {
                 showMainApp();
             }
 
-            // License activation
             document.getElementById('activateBtn').addEventListener('click', async () => {
                 const key = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
                 await activateLicense(key);
@@ -2768,10 +2681,8 @@
                 }
             });
 
-            // Logout
             document.getElementById('logoutBtn').addEventListener('click', logout);
 
-            // Navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -2780,19 +2691,16 @@
                     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
                     document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
 
-                    // Update data status when viewing settings
                     if (btn.dataset.tab === 'settings') {
                         updateDataStatus();
                     }
                 });
             });
 
-            // Transaction modal
             document.getElementById('addTransactionBtn').addEventListener('click', () => showTransactionModal());
             document.querySelector('.close').addEventListener('click', hideTransactionModal);
             document.querySelector('.cancel-btn').addEventListener('click', hideTransactionModal);
 
-            // Transaction form
             document.getElementById('txType').addEventListener('change', (e) => {
                 updateCategoryOptions(e.target.value);
             });
@@ -2818,12 +2726,10 @@
                 hideTransactionModal();
             });
 
-            // Filters
             document.getElementById('searchTransaction').addEventListener('input', renderTransactions);
             document.getElementById('filterType').addEventListener('change', renderTransactions);
             document.getElementById('filterCategory').addEventListener('change', renderTransactions);
 
-            // Bulk actions
             document.getElementById('selectAllBtn').addEventListener('click', () => {
                 document.querySelectorAll('.transaction-checkbox').forEach(cb => cb.checked = true);
             });
@@ -2845,7 +2751,6 @@
                 XLSX.writeFile(wb, 'selected-transactions.xlsx');
             });
 
-            // Import functionality
             document.getElementById('importBtn').addEventListener('click', () => {
                 document.getElementById('fileInput').click();
             });
@@ -2853,7 +2758,6 @@
             document.getElementById('fileInput').addEventListener('change', handleFileImport);
             document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
 
-            // ADDED: Auto-Sync Excel button toggle
             document.getElementById('autoSyncBtn').addEventListener('click', async () => {
                 if (ExcelSync.isRunning) {
                     ExcelSync.stop();
@@ -2862,17 +2766,14 @@
                 }
             });
 
-            // ADDED: Sync Now button — manual immediate sync
             document.getElementById('syncNowBtn').addEventListener('click', () => {
                 ExcelSync.readAndSync();
             });
 
-            // ADDED: Stop button inside status bar
             document.getElementById('syncStopBtn').addEventListener('click', () => {
                 ExcelSync.stop();
             });
 
-            // ADDED: Restart polling when interval dropdown changes
             document.getElementById('syncInterval').addEventListener('change', () => {
                 if (ExcelSync.isRunning && ExcelSync.intervalId) {
                     clearInterval(ExcelSync.intervalId);
@@ -2881,7 +2782,6 @@
                 }
             });
 
-            // Reports
             document.getElementById('generateReportBtn').addEventListener('click', generateReports);
 
             document.querySelectorAll('.export-pdf').forEach(btn => {
@@ -2890,12 +2790,10 @@
                 });
             });
 
-            // Tax
             document.getElementById('generateTaxBtn').addEventListener('click', generateTaxSummary);
             document.getElementById('exportTaxPdfBtn').addEventListener('click', () => exportToPDF('tax'));
             document.getElementById('exportTaxExcelBtn').addEventListener('click', exportToExcel);
 
-            // Settings
             document.getElementById('settingsForm').addEventListener('submit', (e) => {
                 e.preventDefault();
                 saveSettings();
