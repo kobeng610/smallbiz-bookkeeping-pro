@@ -2382,7 +2382,7 @@
                                 type: (row[typeKey] || 'expense').toString().toLowerCase().trim(),
                                 category: row[categoryKey] || 'Other Expenses',
                                 description: row[descKey] || 'Imported',
-                                amount: Math.abs(parseFloat(row[amountKey] || 0)),
+                                amount: Math.abs(parseFloat(String(row[amountKey] ?? '0').replace(/[^0-9.-]/g, '')) || 0),
                                 notes: (row[notesKey] || '').toString()
                             };
 
@@ -2476,7 +2476,7 @@
                             dateValue = dateValue.toString().trim();
                         }
 
-                        const amount = Math.abs(parseFloat(row[amountKey] || 0));
+                        const amount = Math.abs(parseFloat(String(row[amountKey] ?? '0').replace(/[^0-9.-]/g, '')) || 0);
                         if (!dateValue || !amount || amount <= 0) { errorCount++; return; }
 
                         let type = (row[typeKey] || 'expense').toString().toLowerCase().trim();
