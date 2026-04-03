@@ -2340,6 +2340,15 @@
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array', sheetRows: 10001 });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        // Expand the sheet's declared used-range to 10,000 rows.
+                        // Excel can save a stale !ref that stops at the last row
+                        // the file had when first created, silently cutting off
+                        // any rows added afterward.
+                        if (firstSheet['!ref']) {
+                            const refRange = XLSX.utils.decode_range(firstSheet['!ref']);
+                            refRange.e.r = Math.max(refRange.e.r, 9999);
+                            firstSheet['!ref'] = XLSX.utils.encode_range(refRange);
+                        }
                         importedData = XLSX.utils.sheet_to_json(firstSheet, {
                             defval: '',
                             raw: false,
