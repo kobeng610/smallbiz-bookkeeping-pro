@@ -1396,18 +1396,23 @@
 
             async verifyLicense() {
                 const savedLicense = localStorage.getItem('sbkp_license');
-                const savedFingerprint = localStorage.getItem('sbkp_fingerprint');
-                if (!savedLicense || !savedFingerprint) return false;
+                if (!savedLicense) return false;
 
+                // Validate the key format
                 const validation = this.validateLicenseKey(savedLicense);
                 if (!validation.valid) return false;
 
-                const currentFingerprint = await this.generateDeviceFingerprint();
+                // Confirm this browser has an activation record for this license.
+                // We do NOT regenerate the canvas/WebGL fingerprint here because
+                // those values can vary slightly between renders (GPU driver state,
+                // sub-pixel differences) and would cause a false mismatch on every
+                // refresh, locking the user out even though their data is intact.
+                // Device-binding was already enforced at activation time.
                 const storedFP = localStorage.getItem(`sbkp_fp_${savedLicense}`);
-                if (!storedFP || savedFingerprint !== currentFingerprint) return false;
+                if (!storedFP) return false;
 
                 this.licenseKey = savedLicense;
-                this.deviceFingerprint = savedFingerprint;
+                this.deviceFingerprint = storedFP;
                 return true;
             }
 
