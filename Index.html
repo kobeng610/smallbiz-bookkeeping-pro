@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
+
     <style>
         /* Reset and Base Styles */
         * {
@@ -16,7 +16,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
             --primary-color: #4f46e5;
             --primary-hover: #4338ca;
@@ -37,7 +36,6 @@
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
@@ -46,7 +44,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
         /* License Screen */
         .license-screen {
             min-height: 100vh;
@@ -58,7 +55,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .license-screen::before {
             content: '';
             position: absolute;
@@ -70,7 +66,6 @@
                         radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
             pointer-events: none;
         }
-
         .license-container {
             background: white;
             border-radius: 24px;
@@ -82,12 +77,10 @@
             z-index: 1;
             backdrop-filter: blur(10px);
         }
-
         .license-header {
             text-align: center;
             margin-bottom: 40px;
         }
-
         .license-header h1 {
             font-size: 32px;
             font-weight: 800;
@@ -98,17 +91,14 @@
             margin-bottom: 12px;
             letter-spacing: -0.5px;
         }
-
         .tagline {
             color: var(--text-secondary);
             font-size: 15px;
             font-weight: 500;
         }
-
         .license-form {
             margin-bottom: 32px;
         }
-
         .license-form h2 {
             font-size: 22px;
             font-weight: 700;
@@ -116,7 +106,6 @@
             color: var(--text-primary);
             letter-spacing: -0.3px;
         }
-
         .license-form input {
             width: 100%;
             padding: 14px 18px;
@@ -128,7 +117,6 @@
             transition: all 0.3s ease;
             background: var(--bg-secondary);
         }
-
         .license-form input:focus {
             outline: none;
             border-color: var(--primary-color);
@@ -136,7 +124,6 @@
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
             transform: translateY(-1px);
         }
-
         .license-message {
             margin-top: 16px;
             padding: 14px 18px;
@@ -145,21 +132,18 @@
             font-weight: 500;
             display: none;
         }
-
         .license-message.success {
             background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             color: #065f46;
             display: block;
             border: 2px solid #10b981;
         }
-
         .license-message.error {
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: #991b1b;
             display: block;
             border: 2px solid #ef4444;
         }
-
         .license-footer {
             text-align: center;
             padding-top: 28px;
@@ -168,19 +152,16 @@
             font-size: 15px;
             font-weight: 600;
         }
-
         .license-footer p:first-child {
             color: var(--text-primary);
             font-size: 16px;
         }
-
         /* Main Application */
         .main-app {
             min-height: 100vh;
             display: none;
             flex-direction: column;
         }
-
         /* Header */
         .app-header {
             background: white;
@@ -188,7 +169,6 @@
             padding: 20px 0;
             box-shadow: var(--shadow-sm);
         }
-
         .header-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -197,7 +177,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .app-header h1 {
             font-size: 26px;
             font-weight: 800;
@@ -207,13 +186,11 @@
             background-clip: text;
             letter-spacing: -0.5px;
         }
-
         .header-actions {
             display: flex;
             align-items: center;
             gap: 16px;
         }
-
         .license-info {
             font-size: 13px;
             color: var(--text-muted);
@@ -223,7 +200,6 @@
             border-radius: 8px;
             font-weight: 500;
         }
-
         /* Navigation */
         .main-nav {
             background: white;
@@ -235,7 +211,6 @@
             margin: 0 auto;
             width: 100%;
         }
-
         .nav-btn {
             background: none;
             border: none;
@@ -248,18 +223,15 @@
             transition: all 0.3s ease;
             border-radius: 8px 8px 0 0;
         }
-
         .nav-btn:hover {
             color: var(--text-primary);
             background: var(--bg-secondary);
         }
-
         .nav-btn.active {
             color: var(--primary-color);
             border-bottom-color: var(--primary-color);
             background: var(--primary-light);
         }
-
         /* Main Content */
         .main-content {
             flex: 1;
@@ -268,15 +240,12 @@
             width: 100%;
             padding: 32px 24px;
         }
-
         .tab-content {
             display: none;
         }
-
         .tab-content.active {
             display: block;
         }
-
         /* Buttons */
         .btn-primary, .btn-secondary, .btn-danger {
             padding: 12px 24px;
@@ -289,47 +258,39 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             letter-spacing: 0.3px;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
-
         .btn-primary:hover {
             background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
         }
-
         .btn-primary:active {
             transform: translateY(0);
         }
-
         .btn-secondary {
             background: white;
             color: var(--text-primary);
             border: 2px solid var(--border-color);
         }
-
         .btn-secondary:hover {
             background: var(--bg-tertiary);
             border-color: var(--text-secondary);
             transform: translateY(-1px);
         }
-
         .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
-
         .btn-danger:hover {
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
         }
-
         /* Dashboard */
         .dashboard-grid {
             display: grid;
@@ -337,7 +298,6 @@
             gap: 24px;
             margin-bottom: 32px;
         }
-
         .stat-card {
             background: white;
             padding: 28px;
@@ -348,7 +308,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .stat-card::before {
             content: '';
             position: absolute;
@@ -358,12 +317,10 @@
             height: 4px;
             background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
         }
-
         .stat-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
         }
-
         .stat-card h3 {
             font-size: 13px;
             font-weight: 600;
@@ -372,7 +329,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         .stat-value {
             font-size: 36px;
             font-weight: 800;
@@ -382,7 +338,6 @@
             background-clip: text;
             letter-spacing: -1px;
         }
-
         .chart-container {
             background: white;
             padding: 28px;
@@ -390,14 +345,12 @@
             box-shadow: var(--shadow-md);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
         .chart-container h3 {
             margin-bottom: 20px;
             font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.3px;
         }
-
         /* Transactions */
         .section-header {
             display: flex;
@@ -405,21 +358,18 @@
             align-items: center;
             margin-bottom: 28px;
         }
-
         .section-header h2 {
             font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
             color: var(--text-primary);
         }
-
         .filters {
             display: flex;
             gap: 12px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
         .filters input,
         .filters select {
             padding: 12px 16px;
@@ -430,25 +380,22 @@
             transition: all 0.3s ease;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
-
         .filters input:focus,
         .filters select:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
-
         .filters input {
             flex: 1;
             min-width: 200px;
         }
-
         .bulk-actions {
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
+            flex-wrap: wrap;
         }
-
         .transactions-list {
             background: white;
             border-radius: 16px;
@@ -456,7 +403,6 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             overflow: hidden;
         }
-
         .transaction-header {
             display: grid;
             grid-template-columns: 40px 110px 90px 140px 2fr 130px 140px;
@@ -470,7 +416,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         .transaction-item {
             display: grid;
             grid-template-columns: 40px 110px 90px 140px 2fr 130px 140px;
@@ -480,40 +425,33 @@
             align-items: center;
             transition: all 0.2s ease;
         }
-
         .transaction-item:hover {
             background: var(--bg-secondary);
             transform: translateX(2px);
         }
-
         .transaction-item:last-child {
             border-bottom: none;
         }
-
         .transaction-date {
             font-size: 14px;
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-secondary);
             font-weight: 500;
         }
-
         .transaction-category {
             font-size: 14px;
             color: var(--text-secondary);
         }
-
         .transaction-description {
             font-size: 14px;
             color: var(--text-primary);
             font-weight: 500;
         }
-
         .transaction-checkbox {
             width: 18px;
             height: 18px;
             cursor: pointer;
         }
-
         .transaction-type {
             padding: 6px 14px;
             border-radius: 20px;
@@ -522,30 +460,25 @@
             text-align: center;
             letter-spacing: 0.3px;
         }
-
         .transaction-type.income {
             background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
             color: #065f46;
             border: 1px solid #10b981;
         }
-
         .transaction-type.expense {
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: #991b1b;
             border: 1px solid #ef4444;
         }
-
         .transaction-amount {
             font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
             font-size: 15px;
         }
-
         .transaction-actions {
             display: flex;
             gap: 8px;
         }
-
         .action-btn {
             padding: 8px 14px;
             border: none;
@@ -558,14 +491,12 @@
             transition: all 0.2s ease;
             border: 1px solid var(--border-color);
         }
-
         .action-btn:hover {
             background: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
             transform: translateY(-1px);
         }
-
         /* Reports */
         .report-controls {
             background: white;
@@ -579,7 +510,6 @@
             box-shadow: var(--shadow-md);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
         .report-controls label {
             display: flex;
             flex-direction: column;
@@ -588,7 +518,6 @@
             font-weight: 600;
             color: var(--text-primary);
         }
-
         .report-controls input {
             padding: 12px 16px;
             border: 2px solid var(--border-color);
@@ -597,19 +526,16 @@
             transition: all 0.3s ease;
             font-family: 'JetBrains Mono', monospace;
         }
-
         .report-controls input:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
-
         .reports-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 24px;
         }
-
         .report-card {
             background: white;
             padding: 28px;
@@ -618,12 +544,10 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             transition: all 0.3s ease;
         }
-
         .report-card:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
-
         .report-card h3 {
             font-size: 20px;
             font-weight: 700;
@@ -631,12 +555,10 @@
             color: var(--text-primary);
             letter-spacing: -0.3px;
         }
-
         .report-card .export-pdf {
             margin-top: 20px;
             width: 100%;
         }
-
         /* Tax Center */
         .tax-controls {
             background: white;
@@ -649,7 +571,6 @@
             box-shadow: var(--shadow-md);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
         .tax-controls label {
             display: flex;
             flex-direction: column;
@@ -657,7 +578,6 @@
             font-size: 14px;
             font-weight: 600;
         }
-
         .tax-controls select {
             padding: 12px 16px;
             border: 2px solid var(--border-color);
@@ -667,13 +587,11 @@
             transition: all 0.3s ease;
             font-family: 'JetBrains Mono', monospace;
         }
-
         .tax-controls select:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
-
         .tax-summary {
             background: white;
             padding: 28px;
@@ -682,12 +600,10 @@
             box-shadow: var(--shadow-md);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
         .tax-actions {
             display: flex;
             gap: 12px;
         }
-
         /* Modal */
         .modal {
             display: none;
@@ -700,19 +616,16 @@
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
         }
-
         .modal.show {
             display: flex;
             align-items: center;
             justify-content: center;
             animation: fadeIn 0.3s ease;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
         .modal-content {
             background: white;
             border-radius: 20px;
@@ -723,7 +636,6 @@
             box-shadow: var(--shadow-xl);
             animation: slideUp 0.3s ease;
         }
-
         @keyframes slideUp {
             from {
                 transform: translateY(20px);
@@ -734,7 +646,6 @@
                 opacity: 1;
             }
         }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -742,13 +653,11 @@
             padding: 28px;
             border-bottom: 2px solid var(--bg-tertiary);
         }
-
         .modal-header h2 {
             font-size: 22px;
             font-weight: 700;
             letter-spacing: -0.3px;
         }
-
         .close {
             font-size: 32px;
             font-weight: 300;
@@ -763,16 +672,13 @@
             justify-content: center;
             border-radius: 8px;
         }
-
         .close:hover {
             color: var(--text-primary);
             background: var(--bg-secondary);
         }
-
         .modal-content form {
             padding: 28px;
         }
-
         .modal-content label {
             display: flex;
             flex-direction: column;
@@ -782,7 +688,6 @@
             font-weight: 600;
             color: var(--text-primary);
         }
-
         .modal-content input,
         .modal-content select,
         .modal-content textarea {
@@ -793,7 +698,6 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             transition: all 0.3s ease;
         }
-
         .modal-content input:focus,
         .modal-content select:focus,
         .modal-content textarea:focus {
@@ -801,19 +705,140 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
-
         .modal-content textarea {
             resize: vertical;
         }
-
         .modal-actions {
             display: flex;
             gap: 12px;
             margin-top: 28px;
         }
-
         .modal-actions button {
             flex: 1;
+        }
+
+        /* ============================================
+           EXCEL AUTO-SYNC STYLES (ADDED)
+           ============================================ */
+        .auto-sync-status {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+        .sync-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: background 0.3s ease;
+        }
+        .sync-dot-idle    { background: var(--text-muted); }
+        .sync-dot-syncing { background: var(--warning-color); animation: syncPulse 1s infinite; }
+        .sync-dot-success { background: var(--success-color); }
+        .sync-dot-error   { background: var(--danger-color); }
+        @keyframes syncPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.8); }
+        }
+        .sync-file-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--primary-color);
+            font-weight: 600;
+            background: var(--primary-light);
+            padding: 3px 8px;
+            border-radius: 6px;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sync-interval-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .sync-interval-control select {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .sync-mode-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .sync-mode-control select {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .sync-stop-btn {
+            padding: 5px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 7px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--danger-color);
+            transition: all 0.2s ease;
+            border-color: var(--danger-color);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .sync-stop-btn:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+        .sync-now-btn {
+            padding: 5px 12px;
+            border: 1px solid var(--primary-color);
+            border-radius: 7px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: all 0.2s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .sync-now-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        /* Auto-sync unsupported warning */
+        .sync-unsupported {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--warning-color);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #78350f;
+            margin-bottom: 16px;
+            display: none;
         }
 
         /* Responsive Design */
@@ -823,35 +848,42 @@
                 gap: 16px;
                 text-align: center;
             }
-            
+
             .main-nav {
                 overflow-x: auto;
             }
-            
+
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .transaction-header {
                 display: none;
             }
-            
+
             .transaction-item {
                 grid-template-columns: 40px 1fr 100px;
                 gap: 12px;
             }
-            
+
             .transaction-item .transaction-category,
             .transaction-item .transaction-description {
                 display: none;
             }
-            
+
             .reports-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .license-container {
                 padding: 32px;
+            }
+
+            .auto-sync-status {
+                flex-wrap: wrap;
+            }
+            .sync-interval-control {
+                margin-left: 0;
             }
         }
     </style>
@@ -875,7 +907,6 @@
             </div>
         </div>
     </div>
-
     <!-- Main Application -->
     <div id="mainApp" class="main-app">
         <!-- Header -->
@@ -888,7 +919,6 @@
                 </div>
             </div>
         </header>
-
         <!-- Navigation -->
         <nav class="main-nav">
             <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
@@ -897,7 +927,6 @@
             <button class="nav-btn" data-tab="tax">Tax Center</button>
             <button class="nav-btn" data-tab="settings">Settings</button>
         </nav>
-
         <!-- Main Content -->
         <main class="main-content">
             <!-- Dashboard Tab -->
@@ -928,14 +957,13 @@
                     </div>
                 </div>
             </section>
-
             <!-- Transactions Tab -->
             <section id="transactionsTab" class="tab-content">
                 <div class="section-header">
                     <h2>Transactions</h2>
                     <button id="addTransactionBtn" class="btn-primary">Add Transaction</button>
                 </div>
-                
+
                 <div class="filters">
                     <input type="text" id="searchTransaction" placeholder="Search transactions...">
                     <select id="filterType">
@@ -947,21 +975,51 @@
                         <option value="all">All Categories</option>
                     </select>
                 </div>
-
                 <div class="bulk-actions">
                     <button id="selectAllBtn" class="btn-secondary">Select All</button>
                     <button id="deleteSelectedBtn" class="btn-danger">Delete Selected</button>
                     <button id="exportSelectedBtn" class="btn-secondary">Export Selected</button>
                     <button id="importBtn" class="btn-primary">Import CSV/Excel</button>
                     <button id="downloadTemplateBtn" class="btn-secondary">Download Template</button>
+                    <!-- ADDED: Auto-Sync Excel button -->
+                    <button id="autoSyncBtn" class="btn-primary">🔄 Auto-Sync Excel</button>
                     <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+                </div>
+
+                <!-- ADDED: Browser support warning (shown if File System Access API unavailable) -->
+                <div id="syncUnsupportedWarning" class="sync-unsupported">
+                    ⚠️ <strong>Auto-Sync requires Chrome or Edge (v86+).</strong> Your current browser does not support the File System Access API needed for live Excel syncing. Please open this app in Chrome or Edge to use this feature.
+                </div>
+
+                <!-- ADDED: Auto-Sync status bar -->
+                <div id="autoSyncStatus" class="auto-sync-status">
+                    <span id="autoSyncDot" class="sync-dot sync-dot-idle"></span>
+                    <span id="autoSyncFileName" class="sync-file-name"></span>
+                    <span id="autoSyncStatusText" style="flex:1;">Waiting...</span>
+                    <div class="sync-mode-control">
+                        Mode:
+                        <select id="syncMode" title="Replace: overwrite all data from file. Merge: only add new rows.">
+                            <option value="replace">Replace All</option>
+                            <option value="merge">Merge (Add New)</option>
+                        </select>
+                    </div>
+                    <div class="sync-interval-control">
+                        Every:
+                        <select id="syncInterval">
+                            <option value="10">10s</option>
+                            <option value="30" selected>30s</option>
+                            <option value="60">1 min</option>
+                            <option value="300">5 min</option>
+                        </select>
+                    </div>
+                    <button class="sync-now-btn" id="syncNowBtn">Sync Now</button>
+                    <button class="sync-stop-btn" id="syncStopBtn">Stop</button>
                 </div>
 
                 <div class="transactions-list" id="transactionsList">
                     <!-- Header and transactions will be rendered here -->
                 </div>
             </section>
-
             <!-- Reports Tab -->
             <section id="reportsTab" class="tab-content">
                 <h2>Financial Reports</h2>
@@ -976,7 +1034,6 @@
                     </label>
                     <button id="generateReportBtn" class="btn-primary">Generate Reports</button>
                 </div>
-
                 <div class="reports-grid">
                     <div class="report-card">
                         <h3>Income Statement</h3>
@@ -995,7 +1052,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- Tax Center Tab -->
             <section id="taxTab" class="tab-content">
                 <h2>Tax Center - Schedule C</h2>
@@ -1010,25 +1066,22 @@
                     </label>
                     <button id="generateTaxBtn" class="btn-primary">Generate Tax Summary</button>
                 </div>
-
                 <div class="tax-summary" id="taxSummary">
                     <!-- Tax summary will be rendered here -->
                 </div>
-
                 <div class="tax-actions">
                     <button id="exportTaxPdfBtn" class="btn-primary">Export Tax PDF</button>
                     <button id="exportTaxExcelBtn" class="btn-secondary">Export to Excel</button>
                 </div>
             </section>
-
             <!-- Settings Tab -->
             <section id="settingsTab" class="tab-content">
                 <h2>Business Settings</h2>
-                
+
                 <div class="report-card" style="max-width: 800px; margin: 0 auto;">
                     <h3>Business/Individual Information</h3>
                     <p style="color: var(--text-secondary); margin-bottom: 24px;">This information will appear on reports and tax documents.</p>
-                    
+
                     <form id="settingsForm">
                         <label>
                             Currency:
@@ -1064,17 +1117,17 @@
                                 <option value="SAR">🇸🇦 Saudi Riyal (SAR) - ﷼</option>
                             </select>
                         </label>
-                        
+
                         <label>
                             Business/Individual Name:
                             <input type="text" id="settingsBusinessName" placeholder="e.g., John Doe or Acme Consulting LLC">
                         </label>
-                        
+
                         <label>
                             Street Address:
                             <input type="text" id="settingsAddress" placeholder="e.g., 123 Main Street">
                         </label>
-                        
+
                         <label style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
                             <div style="display: flex; flex-direction: column; gap: 10px;">
                                 City:
@@ -1089,32 +1142,32 @@
                                 <input type="text" id="settingsZip" placeholder="e.g., 10001" maxlength="10">
                             </div>
                         </label>
-                        
+
                         <label>
                             Phone Number (Optional):
                             <input type="tel" id="settingsPhone" placeholder="e.g., (555) 123-4567">
                         </label>
-                        
+
                         <label>
                             Email (Optional):
                             <input type="email" id="settingsEmail" placeholder="e.g., john@example.com">
                         </label>
-                        
+
                         <label>
                             Tax ID / EIN / SSN (Optional):
                             <input type="text" id="settingsTaxId" placeholder="e.g., 12-3456789">
                         </label>
-                        
+
                         <div style="margin-top: 28px; display: flex; gap: 12px;">
                             <button type="submit" class="btn-primary">Save Settings</button>
                             <button type="button" id="clearSettingsBtn" class="btn-secondary">Clear All</button>
                         </div>
                     </form>
-                    
+
                     <div id="settingsSavedMessage" style="display: none; margin-top: 20px; padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border: 2px solid #10b981; font-weight: 500;">
                         ✅ Settings saved successfully!
                     </div>
-                    
+
                     <div id="dataStatusInfo" style="margin-top: 20px; padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 2px solid #e2e8f0; font-size: 13px; line-height: 1.6;">
                         <strong>📊 Data Status:</strong><br>
                         <span id="dataStatusText">Loading...</span>
@@ -1123,7 +1176,6 @@
             </section>
         </main>
     </div>
-
     <!-- Transaction Modal -->
     <div id="transactionModal" class="modal">
         <div class="modal-content">
@@ -1168,18 +1220,17 @@
             </form>
         </div>
     </div>
-
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
+
     <!-- Main Application Script -->
     <script>
         // ============================================
         // ALGORITHM-BASED LICENSE AUTHENTICATION
         // ============================================
-        
+
         class LicenseAuth {
             constructor() {
                 this.licenseKey = null;
@@ -1187,29 +1238,27 @@
                 // Secret seed for validation (keep this private when moving to backend)
                 this.SECRET_SEED = 'SBKP-2025-PRO-v1.0';
             }
-
             // Calculate checksum for a license key
             calculateChecksum(key) {
                 const parts = key.split('-');
                 if (parts.length !== 4) return null;
-                
+
                 let sum = 0;
                 const segment = parts[0] + parts[1] + parts[2];
-                
+
                 for (let i = 0; i < segment.length; i++) {
                     const char = segment[i];
                     const value = char.charCodeAt(0);
                     sum += value * (i + 1);
                 }
-                
+
                 // Add secret seed influence
                 for (let i = 0; i < this.SECRET_SEED.length; i++) {
                     sum += this.SECRET_SEED.charCodeAt(i);
                 }
-                
+
                 return sum;
             }
-
             // Validate license key format and checksum
             validateLicenseKey(key) {
                 // Format check: XXXX-XXXX-XXXX-XXXX
@@ -1217,51 +1266,48 @@
                 if (!pattern.test(key)) {
                     return { valid: false, error: 'Invalid license key format' };
                 }
-                
+
                 const parts = key.split('-');
                 const checksum = this.calculateChecksum(key);
-                
+
                 // Validate checksum matches pattern
                 // Last segment should match a derived pattern from first 3 segments
                 const expectedPattern = this.derivePattern(parts[0], parts[1], parts[2]);
-                
+
                 if (this.matchesPattern(parts[3], expectedPattern, checksum)) {
                     return { valid: true };
                 }
-                
+
                 return { valid: false, error: 'Invalid license key' };
             }
-
             // Derive expected pattern from first 3 segments
             derivePattern(seg1, seg2, seg3) {
                 let pattern = '';
                 const combined = seg1 + seg2 + seg3;
-                
+
                 for (let i = 0; i < 4; i++) {
                     const index = (i * 3) % combined.length;
                     pattern += combined[index];
                 }
-                
+
                 return pattern;
             }
-
             // Check if segment matches the expected pattern
             matchesPattern(segment, expectedPattern, checksum) {
                 // Simple validation: segment should have relationship to pattern and checksum
                 let score = 0;
-                
+
                 for (let i = 0; i < 4; i++) {
                     const charCode = segment.charCodeAt(i);
                     const patternCode = expectedPattern.charCodeAt(i);
                     const diff = Math.abs(charCode - patternCode);
-                    
+
                     if (diff < 15) score++;
                 }
-                
+
                 // At least 2 characters should be close to pattern
                 return score >= 2;
             }
-
             async generateDeviceFingerprint() {
                 const components = {
                     userAgent: navigator.userAgent,
@@ -1276,19 +1322,17 @@
                     canvasFingerprint: await this.getCanvasFingerprint(),
                     webglFingerprint: this.getWebGLFingerprint()
                 };
-
                 const fingerprint = JSON.stringify(components);
                 return this.hashString(fingerprint);
             }
-
             async getCanvasFingerprint() {
                 try {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    
+
                     canvas.width = 200;
                     canvas.height = 50;
-                    
+
                     ctx.textBaseline = 'top';
                     ctx.font = '14px "Arial"';
                     ctx.textBaseline = 'alphabetic';
@@ -1298,31 +1342,26 @@
                     ctx.fillText('SmallBiz BookKeeping Pro 🔐', 2, 15);
                     ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
                     ctx.fillText('SmallBiz BookKeeping Pro 🔐', 4, 17);
-
                     const dataURL = canvas.toDataURL();
                     return this.hashString(dataURL);
                 } catch (e) {
                     return 'canvas-unavailable';
                 }
             }
-
             getWebGLFingerprint() {
                 try {
                     const canvas = document.createElement('canvas');
                     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                    
-                    if (!gl) return 'webgl-unavailable';
 
+                    if (!gl) return 'webgl-unavailable';
                     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                     const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'unknown';
                     const vendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'unknown';
-
                     return this.hashString(`${renderer}-${vendor}`);
                 } catch (e) {
                     return 'webgl-unavailable';
                 }
             }
-
             hashString(str) {
                 let hash = 0;
                 for (let i = 0; i < str.length; i++) {
@@ -1332,92 +1371,78 @@
                 }
                 return Math.abs(hash).toString(36);
             }
-
             async activateLicense(licenseKey) {
                 console.log('🔑 Validating license key:', licenseKey);
-                
+
                 const validation = this.validateLicenseKey(licenseKey);
-                
+
                 if (!validation.valid) {
                     return {
                         success: false,
                         error: validation.error
                     };
                 }
-
                 // Check if already activated on another device
                 const deviceFP = await this.generateDeviceFingerprint();
                 const storedFP = localStorage.getItem(`sbkp_fp_${licenseKey}`);
-                
+
                 if (storedFP && storedFP !== deviceFP) {
                     return {
                         success: false,
                         error: 'This license is already activated on another device'
                     };
                 }
-
                 // Store device fingerprint for this license
                 localStorage.setItem(`sbkp_fp_${licenseKey}`, deviceFP);
-                
+
                 this.licenseKey = licenseKey;
                 this.deviceFingerprint = deviceFP;
-                
-                this.saveLicenseData();
 
+                this.saveLicenseData();
                 return {
                     success: true,
                     licenseType: 'SINGLE',
                     features: ['all']
                 };
             }
-
             async verifyLicense() {
                 const savedLicense = localStorage.getItem('sbkp_license');
                 const savedFingerprint = localStorage.getItem('sbkp_fingerprint');
-
                 if (!savedLicense || !savedFingerprint) {
                     return false;
                 }
-
                 // Validate the license key format
                 const validation = this.validateLicenseKey(savedLicense);
                 if (!validation.valid) {
                     return false;
                 }
-
                 // Verify device fingerprint matches
                 const currentFingerprint = await this.generateDeviceFingerprint();
                 const storedFP = localStorage.getItem(`sbkp_fp_${savedLicense}`);
-
                 if (!storedFP || savedFingerprint !== currentFingerprint) {
                     return false;
                 }
-
                 this.licenseKey = savedLicense;
                 this.deviceFingerprint = savedFingerprint;
                 return true;
             }
-
             deactivateLicense() {
                 if (this.licenseKey) {
                     localStorage.removeItem(`sbkp_fp_${this.licenseKey}`);
                 }
-                
+
                 localStorage.removeItem('sbkp_license');
                 localStorage.removeItem('sbkp_fingerprint');
-                
+
                 this.licenseKey = null;
                 this.deviceFingerprint = null;
             }
-
             saveLicenseData() {
                 localStorage.setItem('sbkp_license', this.licenseKey);
                 localStorage.setItem('sbkp_fingerprint', this.deviceFingerprint);
             }
-
             getLicenseInfo() {
                 if (!this.licenseKey) return null;
-
                 return {
                     key: this.licenseKey,
                     type: 'SINGLE',
@@ -1425,12 +1450,11 @@
                     activatedAt: new Date().toISOString()
                 };
             }
-
             // License key generator (for your use when creating new licenses)
             static generateLicenseKey() {
                 const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing chars: 0, O, I, 1
                 const segments = [];
-                
+
                 for (let i = 0; i < 4; i++) {
                     let segment = '';
                     for (let j = 0; j < 4; j++) {
@@ -1438,19 +1462,18 @@
                     }
                     segments.push(segment);
                 }
-                
+
                 return segments.join('-');
             }
         }
-
         // ============================================
         // APPLICATION CODE
         // ============================================
-        
+
         // Helper function to format currency with commas
         function formatCurrency(amount) {
             const currency = APP.businessSettings.currency || 'USD';
-            
+
             // Currency locale mapping for proper formatting
             const localeMap = {
                 'USD': 'en-US', 'EUR': 'de-DE', 'GBP': 'en-GB', 'CAD': 'en-CA',
@@ -1462,9 +1485,9 @@
                 'MYR': 'ms-MY', 'PHP': 'en-PH', 'IDR': 'id-ID', 'AED': 'ar-AE',
                 'SAR': 'ar-SA'
             };
-            
+
             const locale = localeMap[currency] || 'en-US';
-            
+
             return parseFloat(amount).toLocaleString(locale, {
                 style: 'currency',
                 currency: currency,
@@ -1472,7 +1495,7 @@
                 maximumFractionDigits: 2
             });
         }
-        
+
         // Application State
         const APP = {
             version: '1.0.0',
@@ -1491,33 +1514,31 @@
             },
             categories: {
                 income: ['Sales', 'Services', 'Consulting', 'Products', 'Other Income'],
-                expense: ['Advertising', 'Car & Truck', 'Commissions', 'Contract Labor', 'Depreciation', 
-                          'Employee Benefits', 'Insurance', 'Legal & Professional', 'Office Expense', 
-                          'Rent', 'Repairs & Maintenance', 'Supplies', 'Travel', 'Meals', 'Utilities', 
+                expense: ['Advertising', 'Car & Truck', 'Commissions', 'Contract Labor', 'Depreciation',
+                          'Employee Benefits', 'Insurance', 'Legal & Professional', 'Office Expense',
+                          'Rent', 'Repairs & Maintenance', 'Supplies', 'Travel', 'Meals', 'Utilities',
                           'Wages', 'Other Expenses']
             },
             chart: null,
             editingTransactionId: null
         };
-
         // Initialize Advanced License System
         const licenseAuth = new LicenseAuth();
-
         // License Management Functions
         async function activateLicense(licenseKey) {
             console.log('🔑 Attempting to activate license:', licenseKey);
             const messageEl = document.getElementById('licenseMessage');
-            
+
             try {
                 const result = await licenseAuth.activateLicense(licenseKey);
                 console.log('📋 Activation result:', result);
-                
+
                 if (result.success) {
                     messageEl.textContent = 'License activated successfully!';
                     messageEl.className = 'license-message success';
-                    
+
                     APP.licenseKey = licenseKey;
-                    
+
                     setTimeout(() => {
                         showMainApp();
                     }, 1000);
@@ -1531,7 +1552,6 @@
                 messageEl.className = 'license-message error';
             }
         }
-
         async function checkLicense() {
             const isValid = await licenseAuth.verifyLicense();
             if (isValid) {
@@ -1539,14 +1559,13 @@
             }
             return isValid;
         }
-
         function logout() {
             if (confirm('Are you sure you want to logout?\n\nYour data will be saved and available when you login again with this license.\n\nNote: Data is automatically deleted after 30 days of inactivity.')) {
+                ExcelSync.stop(); // Stop any active sync before logout
                 licenseAuth.deactivateLicense();
                 location.reload();
             }
         }
-
         function showMainApp() {
             document.getElementById('licenseScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'flex';
@@ -1554,43 +1573,41 @@
             loadData();
             initializeApp();
         }
-
         // Data Management
         function saveData() {
             if (!APP.licenseKey) return;
-            
+
             const dataPackage = {
                 transactions: APP.transactions,
                 settings: APP.businessSettings,
                 lastSaved: new Date().toISOString()
             };
-            
+
             // Store with license key prefix for isolation
             localStorage.setItem(`sbkp_data_${APP.licenseKey}`, JSON.stringify(dataPackage));
-            
+
             // Clean up old data from other licenses (older than 30 days)
             cleanupOldData();
         }
-
         function loadData() {
             if (!APP.licenseKey) return;
-            
+
             const savedData = localStorage.getItem(`sbkp_data_${APP.licenseKey}`);
             if (savedData) {
                 try {
                     const dataPackage = JSON.parse(savedData);
-                    
+
                     // Check if data is older than 30 days
                     const lastSaved = new Date(dataPackage.lastSaved);
                     const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
-                    
+
                     if (daysSinceLastSave > 30) {
                         console.log('⏰ Data is older than 30 days, clearing...');
                         localStorage.removeItem(`sbkp_data_${APP.licenseKey}`);
                         alert('Your data was inactive for over 30 days and has been cleared for security.');
                         return;
                     }
-                    
+
                     // Load the data
                     APP.transactions = dataPackage.transactions || [];
                     APP.businessSettings = dataPackage.settings || {
@@ -1605,28 +1622,28 @@
                         taxId: ''
                     };
                     loadSettingsToForm();
-                    
+
                 } catch (error) {
                     console.error('Error loading data:', error);
                 }
             }
         }
-        
+
         function cleanupOldData() {
             // Find all license data keys in localStorage
             const allKeys = Object.keys(localStorage);
             const dataKeys = allKeys.filter(key => key.startsWith('sbkp_data_'));
-            
+
             dataKeys.forEach(key => {
                 // Skip current license
                 if (key === `sbkp_data_${APP.licenseKey}`) return;
-                
+
                 try {
                     const data = JSON.parse(localStorage.getItem(key));
                     if (data && data.lastSaved) {
                         const lastSaved = new Date(data.lastSaved);
                         const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
-                        
+
                         // Delete if older than 30 days
                         if (daysSinceLastSave > 30) {
                             console.log(`🗑️ Removing old data for ${key} (${Math.floor(daysSinceLastSave)} days old)`);
@@ -1639,7 +1656,7 @@
                 }
             });
         }
-        
+
         function loadSettingsToForm() {
             document.getElementById('settingsCurrency').value = APP.businessSettings.currency || 'USD';
             document.getElementById('settingsBusinessName').value = APP.businessSettings.businessName || '';
@@ -1651,7 +1668,7 @@
             document.getElementById('settingsEmail').value = APP.businessSettings.email || '';
             document.getElementById('settingsTaxId').value = APP.businessSettings.taxId || '';
         }
-        
+
         function saveSettings() {
             APP.businessSettings = {
                 currency: document.getElementById('settingsCurrency').value,
@@ -1664,13 +1681,13 @@
                 email: document.getElementById('settingsEmail').value,
                 taxId: document.getElementById('settingsTaxId').value
             };
-            
+
             saveData();
-            
+
             // Refresh dashboard to show new currency
             updateDashboard();
             renderTransactions();
-            
+
             // Show success message
             const messageEl = document.getElementById('settingsSavedMessage');
             messageEl.style.display = 'block';
@@ -1678,7 +1695,7 @@
                 messageEl.style.display = 'none';
             }, 3000);
         }
-        
+
         function clearSettings() {
             if (confirm('Are you sure you want to clear all business settings?')) {
                 APP.businessSettings = {
@@ -1698,64 +1715,63 @@
                 renderTransactions();
             }
         }
-        
+
         function updateDataStatus() {
             const statusEl = document.getElementById('dataStatusText');
             if (!statusEl || !APP.licenseKey) return;
-            
+
             const savedData = localStorage.getItem(`sbkp_data_${APP.licenseKey}`);
             if (!savedData) {
                 statusEl.innerHTML = 'No saved data yet. Start adding transactions!';
                 return;
             }
-            
+
             try {
                 const dataPackage = JSON.parse(savedData);
                 const lastSaved = new Date(dataPackage.lastSaved);
                 const daysSinceLastSave = (new Date() - lastSaved) / (1000 * 60 * 60 * 24);
                 const daysRemaining = Math.max(0, 30 - Math.floor(daysSinceLastSave));
-                
+
                 const transactionCount = dataPackage.transactions?.length || 0;
-                
+
                 let statusHTML = `
                     Last saved: <strong>${lastSaved.toLocaleDateString()} at ${lastSaved.toLocaleTimeString()}</strong><br>
                     Transactions stored: <strong>${transactionCount}</strong><br>
                     Data expires in: <strong>${daysRemaining} days</strong>
                 `;
-                
+
                 if (daysRemaining < 7) {
                     statusHTML += `<br><span style="color: #dc2626;">⚠️ Warning: Data will be auto-deleted in ${daysRemaining} days! Login to refresh.</span>`;
                 } else if (daysRemaining < 14) {
                     statusHTML += `<br><span style="color: #f59e0b;">⏰ Reminder: Data expires in ${daysRemaining} days.</span>`;
                 }
-                
+
                 statusEl.innerHTML = statusHTML;
             } catch (error) {
                 statusEl.innerHTML = 'Unable to load data status.';
             }
         }
-        
+
         function getBusinessHeader() {
             const s = APP.businessSettings;
             if (!s.businessName && !s.address) {
                 return '';
             }
-            
+
             let header = '';
             if (s.businessName) header += s.businessName + '\n';
             if (s.address) header += s.address + '\n';
             if (s.city || s.state || s.zip) {
-                header += (s.city ? s.city + ', ' : '') + 
-                         (s.state ? s.state + ' ' : '') + 
+                header += (s.city ? s.city + ', ' : '') +
+                         (s.state ? s.state + ' ' : '') +
                          (s.zip || '') + '\n';
             }
             if (s.phone) header += 'Phone: ' + s.phone + '\n';
             if (s.email) header += 'Email: ' + s.email + '\n';
             if (s.taxId) header += 'Tax ID: ' + s.taxId + '\n';
-            
+
             return header;
         }
-
         // Transaction Management
         function addTransaction(transaction) {
             transaction.id = Date.now().toString();
@@ -1764,7 +1780,6 @@
             renderTransactions();
             updateDashboard();
         }
-
         function updateTransaction(id, transaction) {
             const index = APP.transactions.findIndex(t => t.id === id);
             if (index !== -1) {
@@ -1775,7 +1790,6 @@
                 updateDashboard();
             }
         }
-
         function deleteTransaction(id) {
             if (confirm('Are you sure you want to delete this transaction?')) {
                 APP.transactions = APP.transactions.filter(t => t.id !== id);
@@ -1784,14 +1798,13 @@
                 updateDashboard();
             }
         }
-
         function deleteSelectedTransactions() {
             const checkboxes = document.querySelectorAll('.transaction-checkbox:checked');
             if (checkboxes.length === 0) {
                 alert('Please select transactions to delete');
                 return;
             }
-            
+
             if (confirm(`Delete ${checkboxes.length} selected transaction(s)?`)) {
                 checkboxes.forEach(cb => {
                     APP.transactions = APP.transactions.filter(t => t.id !== cb.dataset.id);
@@ -1801,24 +1814,23 @@
                 updateDashboard();
             }
         }
-
         // Rendering
         function renderTransactions() {
             const container = document.getElementById('transactionsList');
             const searchTerm = document.getElementById('searchTransaction').value.toLowerCase();
             const typeFilter = document.getElementById('filterType').value;
             const categoryFilter = document.getElementById('filterCategory').value;
-            
+
             let filtered = APP.transactions.filter(t => {
-                const matchesSearch = t.description.toLowerCase().includes(searchTerm) || 
+                const matchesSearch = t.description.toLowerCase().includes(searchTerm) ||
                                     (t.notes && t.notes.toLowerCase().includes(searchTerm));
                 const matchesType = typeFilter === 'all' || t.type === typeFilter;
                 const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
                 return matchesSearch && matchesType && matchesCategory;
             });
-            
+
             filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
+
             const header = `
                 <div class="transaction-header">
                     <div></div>
@@ -1830,12 +1842,12 @@
                     <div>Actions</div>
                 </div>
             `;
-            
+
             if (filtered.length === 0) {
                 container.innerHTML = header + '<div style="padding: 32px; text-align: center; color: var(--text-secondary);">No transactions found</div>';
                 return;
             }
-            
+
             const rows = filtered.map(t => `
                 <div class="transaction-item">
                     <input type="checkbox" class="transaction-checkbox" data-id="${t.id}">
@@ -1850,44 +1862,42 @@
                     </div>
                 </div>
             `).join('');
-            
+
             container.innerHTML = header + rows;
         }
-
         function updateDashboard() {
             const income = APP.transactions
                 .filter(t => t.type === 'income')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            
+
             const expenses = APP.transactions
                 .filter(t => t.type === 'expense')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            
+
             document.getElementById('totalRevenue').textContent = formatCurrency(income);
             document.getElementById('totalExpenses').textContent = formatCurrency(expenses);
             document.getElementById('netIncome').textContent = formatCurrency(income - expenses);
             document.getElementById('totalTransactions').textContent = APP.transactions.length;
-            
+
             updateChart();
         }
-
         function updateChart() {
             const ctx = document.getElementById('monthlyChart');
             if (!ctx) return;
-            
+
             // Calculate total income and expenses across all transactions
             const totalIncome = APP.transactions
                 .filter(t => t.type === 'income')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            
+
             const totalExpenses = APP.transactions
                 .filter(t => t.type === 'expense')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            
+
             if (APP.chart) {
                 APP.chart.destroy();
             }
-            
+
             APP.chart = new Chart(ctx, {
                 type: 'pie',
                 data: {
@@ -1935,14 +1945,13 @@
                 }
             });
         }
-
         // Modal Management
         function showTransactionModal(transactionId = null) {
             const modal = document.getElementById('transactionModal');
             const form = document.getElementById('transactionForm');
-            
+
             APP.editingTransactionId = transactionId;
-            
+
             if (transactionId) {
                 const transaction = APP.transactions.find(t => t.id === transactionId);
                 document.getElementById('modalTitle').textContent = 'Edit Transaction';
@@ -1959,52 +1968,47 @@
                 document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
                 updateCategoryOptions('income');
             }
-            
+
             modal.classList.add('show');
         }
-
         function hideTransactionModal() {
             document.getElementById('transactionModal').classList.remove('show');
             APP.editingTransactionId = null;
         }
-
         function updateCategoryOptions(type) {
             const categorySelect = document.getElementById('txCategory');
             const categories = APP.categories[type] || [];
             categorySelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
-
         function editTransaction(id) {
             showTransactionModal(id);
         }
-
         // Reports
         function generateReports() {
             const startDate = document.getElementById('reportStartDate').value;
             const endDate = document.getElementById('reportEndDate').value;
-            
+
             if (!startDate || !endDate) {
                 alert('Please select both start and end dates');
                 return;
             }
-            
+
             const filtered = APP.transactions.filter(t => {
                 return t.date >= startDate && t.date <= endDate;
             });
-            
+
             generateIncomeStatement(filtered, startDate, endDate);
             generateCashFlow(filtered, startDate, endDate);
             generateCategoryAnalysis(filtered, startDate, endDate);
         }
-
         function generateIncomeStatement(transactions, startDate, endDate) {
             const income = transactions.filter(t => t.type === 'income');
             const expenses = transactions.filter(t => t.type === 'expense');
-            
+
             const totalIncome = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const totalExpenses = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const netIncome = totalIncome - totalExpenses;
-            
+
             const html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
@@ -2015,18 +2019,17 @@
                     <p style="font-size: 16px;"><strong>Net Income:</strong> ${formatCurrency(netIncome)}</p>
                 </div>
             `;
-            
+
             document.getElementById('incomeStatement').innerHTML = html;
         }
-
         function generateCashFlow(transactions, startDate, endDate) {
             const income = transactions.filter(t => t.type === 'income');
             const expenses = transactions.filter(t => t.type === 'expense');
-            
+
             const cashIn = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const cashOut = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             const netCash = cashIn - cashOut;
-            
+
             const html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
@@ -2037,13 +2040,12 @@
                     <p style="font-size: 16px;"><strong>Net Cash Flow:</strong> ${formatCurrency(netCash)}</p>
                 </div>
             `;
-            
+
             document.getElementById('cashFlow').innerHTML = html;
         }
-
         function generateCategoryAnalysis(transactions, startDate, endDate) {
             const byCategory = {};
-            
+
             transactions.forEach(t => {
                 if (!byCategory[t.category]) {
                     byCategory[t.category] = { income: 0, expense: 0 };
@@ -2054,34 +2056,33 @@
                     byCategory[t.category].expense += parseFloat(t.amount);
                 }
             });
-            
+
             let html = `
                 <div style="font-family: 'Roboto Mono', monospace; font-size: 14px;">
                     <p><strong>Period:</strong> ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
                     <hr style="margin: 16px 0;">
             `;
-            
+
             for (const [category, amounts] of Object.entries(byCategory)) {
                 let displayValue = amounts.income - amounts.expense;
                 html += `<p><strong>${category}:</strong> ${formatCurrency(displayValue)}</p>`;
             }
-            
+
             html += '</div>';
             document.getElementById('categoryAnalysis').innerHTML = html;
         }
-
         // Tax Center
         function generateTaxSummary() {
             const year = parseInt(document.getElementById('taxYear').value);
-            
+
             const yearTransactions = APP.transactions.filter(t => {
                 return new Date(t.date).getFullYear() === year;
             });
-            
+
             const totalIncome = yearTransactions
                 .filter(t => t.type === 'income')
                 .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            
+
             const expensesByCategory = {};
             yearTransactions
                 .filter(t => t.type === 'expense')
@@ -2091,10 +2092,10 @@
                     }
                     expensesByCategory[t.category] += parseFloat(t.amount);
                 });
-            
+
             const totalExpenses = Object.values(expensesByCategory).reduce((sum, val) => sum + val, 0);
             const netProfit = totalIncome - totalExpenses;
-            
+
             let html = `
                 <div style="font-family: 'Roboto Mono', monospace;">
                     <h3>Schedule C - Tax Year ${year}</h3>
@@ -2104,11 +2105,11 @@
                     <hr style="margin: 16px 0;">
                     <h4>Expenses</h4>
             `;
-            
+
             for (const [category, amount] of Object.entries(expensesByCategory)) {
                 html += `<p><strong>${category}:</strong> ${formatCurrency(amount)}</p>`;
             }
-            
+
             html += `
                     <hr style="margin: 16px 0;">
                     <p><strong>Total Expenses:</strong> ${formatCurrency(totalExpenses)}</p>
@@ -2116,17 +2117,16 @@
                     <h4 style="font-size: 18px;"><strong>Net Profit:</strong> ${formatCurrency(netProfit)}</h4>
                 </div>
             `;
-            
+
             document.getElementById('taxSummary').innerHTML = html;
         }
-
         // Export Functions
         function exportToPDF(reportType) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            
+
             let yPos = 20;
-            
+
             // Add business header if available
             const businessHeader = getBusinessHeader();
             if (businessHeader) {
@@ -2140,7 +2140,7 @@
                 yPos += 5;
                 doc.setFont(undefined, 'normal');
             }
-            
+
             // Header
             doc.setFontSize(20);
             doc.text('SmallBiz BookKeeping Pro', 20, yPos);
@@ -2152,29 +2152,29 @@
             yPos += 5;
             doc.text(`License: ${APP.licenseKey}`, 20, yPos);
             yPos += 10;
-            
+
             if (reportType === 'income') {
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
-                
+
                 const income = filtered.filter(t => t.type === 'income');
                 const expenses = filtered.filter(t => t.type === 'expense');
                 const totalIncome = income.reduce((sum, t) => sum + parseFloat(t.amount), 0);
                 const totalExpenses = expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-                
+
                 doc.setFontSize(16);
                 doc.text('Income Statement', 20, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(10);
                 doc.text(`Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`, 20, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(12);
                 doc.text('INCOME', 20, yPos);
                 yPos += 7;
-                
+
                 doc.setFontSize(10);
                 income.forEach(t => {
                     if (yPos > 270) {
@@ -2185,17 +2185,17 @@
                     doc.text(`$${parseFloat(t.amount).toFixed(2)}`, 170, yPos);
                     yPos += 5;
                 });
-                
+
                 yPos += 3;
                 doc.setFontSize(11);
                 doc.text('Total Income:', 20, yPos);
                 doc.text(`$${totalIncome.toFixed(2)}`, 170, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(12);
                 doc.text('EXPENSES', 20, yPos);
                 yPos += 7;
-                
+
                 doc.setFontSize(10);
                 expenses.forEach(t => {
                     if (yPos > 270) {
@@ -2206,51 +2206,51 @@
                     doc.text(`$${parseFloat(t.amount).toFixed(2)}`, 170, yPos);
                     yPos += 5;
                 });
-                
+
                 yPos += 3;
                 doc.setFontSize(11);
                 doc.text('Total Expenses:', 20, yPos);
                 doc.text(`$${totalExpenses.toFixed(2)}`, 170, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(14);
                 doc.text('NET INCOME:', 20, yPos);
                 doc.text(`$${(totalIncome - totalExpenses).toFixed(2)}`, 170, yPos);
-                
+
             } else if (reportType === 'cashflow') {
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
-                
+
                 const cashIn = filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
                 const cashOut = filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + parseFloat(t.amount), 0);
-                
+
                 doc.setFontSize(16);
                 doc.text('Cash Flow Statement', 20, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(10);
                 doc.text(`Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`, 20, yPos);
                 yPos += 15;
-                
+
                 doc.setFontSize(12);
                 doc.text('Cash Inflows:', 20, yPos);
                 doc.text(`$${cashIn.toFixed(2)}`, 170, yPos);
                 yPos += 10;
-                
+
                 doc.text('Cash Outflows:', 20, yPos);
                 doc.text(`$${cashOut.toFixed(2)}`, 170, yPos);
                 yPos += 15;
-                
+
                 doc.setFontSize(14);
                 doc.text('Net Cash Flow:', 20, yPos);
                 doc.text(`$${(cashIn - cashOut).toFixed(2)}`, 170, yPos);
-                
+
             } else if (reportType === 'category') {
                 const startDate = document.getElementById('reportStartDate').value;
                 const endDate = document.getElementById('reportEndDate').value;
                 const filtered = APP.transactions.filter(t => t.date >= startDate && t.date <= endDate);
-                
+
                 const byCategory = {};
                 filtered.forEach(t => {
                     if (!byCategory[t.category]) {
@@ -2262,15 +2262,15 @@
                         byCategory[t.category].expense += parseFloat(t.amount);
                     }
                 });
-                
+
                 doc.setFontSize(16);
                 doc.text('Category Analysis', 20, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(10);
                 doc.text(`Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`, 20, yPos);
                 yPos += 15;
-                
+
                 doc.setFontSize(11);
                 for (const [category, amounts] of Object.entries(byCategory)) {
                     if (yPos > 270) {
@@ -2282,13 +2282,13 @@
                     doc.text(`$${total.toFixed(2)}`, 170, yPos);
                     yPos += 7;
                 }
-                
+
             } else if (reportType === 'tax') {
                 const year = parseInt(document.getElementById('taxYear').value);
                 const yearTransactions = APP.transactions.filter(t => new Date(t.date).getFullYear() === year);
-                
+
                 const totalIncome = yearTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + parseFloat(t.amount), 0);
-                
+
                 const expensesByCategory = {};
                 yearTransactions.filter(t => t.type === 'expense').forEach(t => {
                     if (!expensesByCategory[t.category]) {
@@ -2296,27 +2296,27 @@
                     }
                     expensesByCategory[t.category] += parseFloat(t.amount);
                 });
-                
+
                 const totalExpenses = Object.values(expensesByCategory).reduce((sum, val) => sum + val, 0);
                 const netProfit = totalIncome - totalExpenses;
-                
+
                 doc.setFontSize(16);
                 doc.text(`Schedule C - Tax Year ${year}`, 20, yPos);
                 yPos += 15;
-                
+
                 doc.setFontSize(13);
                 doc.text('GROSS INCOME', 20, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(11);
                 doc.text('Total Income:', 20, yPos);
                 doc.text(`$${totalIncome.toFixed(2)}`, 170, yPos);
                 yPos += 15;
-                
+
                 doc.setFontSize(13);
                 doc.text('EXPENSES', 20, yPos);
                 yPos += 10;
-                
+
                 doc.setFontSize(10);
                 for (const [category, amount] of Object.entries(expensesByCategory)) {
                     if (yPos > 270) {
@@ -2327,28 +2327,26 @@
                     doc.text(`$${amount.toFixed(2)}`, 170, yPos);
                     yPos += 6;
                 }
-                
+
                 yPos += 5;
                 doc.setFontSize(11);
                 doc.text('Total Expenses:', 20, yPos);
                 doc.text(`$${totalExpenses.toFixed(2)}`, 170, yPos);
                 yPos += 15;
-                
+
                 doc.setFontSize(14);
                 doc.text('NET PROFIT:', 20, yPos);
                 doc.text(`$${netProfit.toFixed(2)}`, 170, yPos);
             }
-            
+
             doc.save(`${reportType}-report-${new Date().toISOString().split('T')[0]}.pdf`);
         }
-
         function exportToExcel() {
             const ws = XLSX.utils.json_to_sheet(APP.transactions);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
             XLSX.writeFile(wb, 'transactions.xlsx');
         }
-
         // Import Functions
         function downloadTemplate() {
             const template = [
@@ -2369,39 +2367,39 @@
                     notes: 'Optional notes field'
                 }
             ];
-            
+
             const ws = XLSX.utils.json_to_sheet(template);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Template');
             XLSX.writeFile(wb, 'import-template.xlsx');
         }
-        
+
         function handleFileImport(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
             const fileName = file.name.toLowerCase();
-            
+
             reader.onload = function(e) {
                 try {
                     let importedData = [];
-                    
+
                     if (fileName.endsWith('.csv')) {
                         const text = e.target.result;
                         const lines = text.split('\n');
                         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-                        
+
                         for (let i = 1; i < lines.length; i++) {
                             if (!lines[i].trim()) continue;
-                            
+
                             const values = lines[i].split(',');
                             const transaction = {};
-                            
+
                             headers.forEach((header, index) => {
                                 transaction[header] = values[index]?.trim() || '';
                             });
-                            
+
                             importedData.push(transaction);
                         }
                     } else {
@@ -2410,31 +2408,31 @@
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         importedData = XLSX.utils.sheet_to_json(firstSheet);
                     }
-                    
+
                     let successCount = 0;
                     let errorCount = 0;
                     let transactionsToAdd = [];
-                    
+
                     importedData.forEach((row, index) => {
                         try {
                             const rowKeys = Object.keys(row);
-                            
+
                             const dateKey = rowKeys.find(k => /date/i.test(k));
                             const typeKey = rowKeys.find(k => /type/i.test(k));
                             const categoryKey = rowKeys.find(k => /category/i.test(k));
                             const descKey = rowKeys.find(k => /desc/i.test(k));
                             const amountKey = rowKeys.find(k => /amount/i.test(k));
                             const notesKey = rowKeys.find(k => /note/i.test(k));
-                            
+
                             let dateValue = row[dateKey] || new Date().toISOString().split('T')[0];
-                            
+
                             if (typeof dateValue === 'number') {
                                 const excelDate = new Date((dateValue - 25569) * 86400 * 1000);
                                 dateValue = excelDate.toISOString().split('T')[0];
                             } else if (dateValue instanceof Date) {
                                 dateValue = dateValue.toISOString().split('T')[0];
                             }
-                            
+
                             const transaction = {
                                 date: dateValue,
                                 type: (row[typeKey] || 'expense').toString().toLowerCase().trim(),
@@ -2443,16 +2441,16 @@
                                 amount: Math.abs(parseFloat(row[amountKey] || 0)),
                                 notes: (row[notesKey] || '').toString()
                             };
-                            
+
                             if (!transaction.date || !transaction.amount || transaction.amount <= 0) {
                                 errorCount++;
                                 return;
                             }
-                            
+
                             if (!['income', 'expense'].includes(transaction.type)) {
                                 transaction.type = 'expense';
                             }
-                            
+
                             transaction.id = Date.now().toString() + '-' + index;
                             transactionsToAdd.push(transaction);
                             successCount++;
@@ -2460,33 +2458,223 @@
                             errorCount++;
                         }
                     });
-                    
+
                     APP.transactions.push(...transactionsToAdd);
                     saveData();
                     renderTransactions();
                     updateDashboard();
-                    
+
                     let message = `Import complete!\n\n✅ Successfully imported: ${successCount} transactions`;
                     if (errorCount > 0) {
                         message += `\n❌ Errors/Skipped: ${errorCount}`;
                     }
-                    
+
                     alert(message);
                     event.target.value = '';
-                    
+
                 } catch (error) {
                     console.error('Import error:', error);
                     alert('Error importing file. Please check the file format.');
                     event.target.value = '';
                 }
             };
-            
+
             if (fileName.endsWith('.csv')) {
                 reader.readAsText(file);
             } else {
                 reader.readAsArrayBuffer(file);
             }
         }
+
+        // ============================================
+        // EXCEL AUTO-SYNC (ADDED)
+        // Uses the File System Access API to watch an
+        // Excel file and automatically reload data
+        // whenever the file changes on disk.
+        // Supported in Chrome/Edge v86+.
+        // ============================================
+        const ExcelSync = {
+            fileHandle: null,    // FileSystemFileHandle
+            intervalId: null,    // setInterval ID
+            lastModified: null,  // timestamp of last read file
+            isRunning: false,
+
+            // Parse rows from a workbook into transaction objects
+            parseRows(importedData) {
+                const transactions = [];
+                let errorCount = 0;
+
+                importedData.forEach((row, index) => {
+                    try {
+                        const rowKeys = Object.keys(row);
+
+                        const dateKey     = rowKeys.find(k => /date/i.test(k));
+                        const typeKey     = rowKeys.find(k => /^type$/i.test(k));
+                        const categoryKey = rowKeys.find(k => /category/i.test(k));
+                        const descKey     = rowKeys.find(k => /desc/i.test(k));
+                        const amountKey   = rowKeys.find(k => /amount/i.test(k));
+                        const notesKey    = rowKeys.find(k => /note/i.test(k));
+                        const idKey       = rowKeys.find(k => /^id$/i.test(k));
+
+                        let dateValue = row[dateKey] || new Date().toISOString().split('T')[0];
+                        if (typeof dateValue === 'number') {
+                            // Excel serial date → JS Date
+                            dateValue = new Date((dateValue - 25569) * 86400 * 1000).toISOString().split('T')[0];
+                        } else if (dateValue instanceof Date) {
+                            dateValue = dateValue.toISOString().split('T')[0];
+                        } else {
+                            dateValue = dateValue.toString().trim();
+                        }
+
+                        const amount = Math.abs(parseFloat(row[amountKey] || 0));
+                        if (!dateValue || !amount || amount <= 0) { errorCount++; return; }
+
+                        let type = (row[typeKey] || 'expense').toString().toLowerCase().trim();
+                        if (!['income', 'expense'].includes(type)) type = 'expense';
+
+                        transactions.push({
+                            // Prefer an existing ID column so rows are stable across syncs
+                            id: row[idKey] ? row[idKey].toString() : `sync-${index}-${dateValue}`,
+                            date: dateValue,
+                            type,
+                            category: (row[categoryKey] || 'Other Expenses').toString().trim(),
+                            description: (row[descKey] || 'Auto-synced').toString().trim(),
+                            amount,
+                            notes: (row[notesKey] || '').toString()
+                        });
+                    } catch (e) {
+                        errorCount++;
+                    }
+                });
+
+                return { transactions, errorCount };
+            },
+
+            // Read the linked file and update the app
+            async readAndSync() {
+                if (!this.fileHandle) return;
+
+                try {
+                    const file = await this.fileHandle.getFile();
+
+                    // Skip if file hasn't changed since last read
+                    if (this.lastModified !== null && file.lastModified === this.lastModified) {
+                        this.updateStatus('idle', `No changes — Last checked: ${new Date().toLocaleTimeString()}`);
+                        return;
+                    }
+
+                    this.lastModified = file.lastModified;
+                    this.updateStatus('syncing', 'Syncing…');
+
+                    const arrayBuffer = await file.arrayBuffer();
+                    const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const importedData = XLSX.utils.sheet_to_json(firstSheet);
+
+                    const { transactions: newRows, errorCount } = this.parseRows(importedData);
+                    const mode = document.getElementById('syncMode').value;
+
+                    if (mode === 'replace') {
+                        // Replace all existing transactions with the file contents
+                        APP.transactions = newRows;
+                    } else {
+                        // Merge: add only rows whose ID doesn't already exist
+                        const existingIds = new Set(APP.transactions.map(t => t.id));
+                        const toAdd = newRows.filter(r => !existingIds.has(r.id));
+                        APP.transactions.push(...toAdd);
+                        if (toAdd.length === 0) {
+                            this.updateStatus('idle', `No new rows — Last synced: ${new Date().toLocaleTimeString()}`);
+                            return;
+                        }
+                    }
+
+                    saveData();
+                    renderTransactions();
+                    updateDashboard();
+
+                    const note = errorCount > 0 ? ` (${errorCount} skipped)` : '';
+                    this.updateStatus('success',
+                        `${mode === 'replace' ? 'Replaced' : 'Merged'} ${newRows.length} rows${note} — ${new Date().toLocaleTimeString()}`
+                    );
+
+                } catch (err) {
+                    console.error('Auto-sync error:', err);
+                    this.updateStatus('error', 'Sync failed: ' + err.message);
+                }
+            },
+
+            // Start auto-sync: open file picker then begin polling
+            async start() {
+                if (!('showOpenFilePicker' in window)) {
+                    document.getElementById('syncUnsupportedWarning').style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const [handle] = await window.showOpenFilePicker({
+                        types: [{
+                            description: 'Excel Files',
+                            accept: {
+                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+                                'application/vnd.ms-excel': ['.xls']
+                            }
+                        }],
+                        multiple: false
+                    });
+                    this.fileHandle = handle;
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        alert('Could not open file: ' + err.message);
+                    }
+                    return;
+                }
+
+                this.isRunning = true;
+                this.lastModified = null;
+
+                // Show status bar and update button label
+                document.getElementById('autoSyncStatus').style.display = 'flex';
+                document.getElementById('autoSyncFileName').textContent = this.fileHandle.name;
+                document.getElementById('autoSyncBtn').textContent = '⏹ Stop Auto-Sync';
+                document.getElementById('autoSyncBtn').classList.remove('btn-primary');
+                document.getElementById('autoSyncBtn').classList.add('btn-danger');
+
+                // Immediate first sync
+                await this.readAndSync();
+
+                // Begin polling at the chosen interval
+                const seconds = parseInt(document.getElementById('syncInterval').value) || 30;
+                this.intervalId = setInterval(() => this.readAndSync(), seconds * 1000);
+            },
+
+            // Stop auto-sync and reset UI
+            stop() {
+                if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
+                this.isRunning   = false;
+                this.fileHandle  = null;
+                this.lastModified = null;
+
+                document.getElementById('autoSyncStatus').style.display = 'none';
+                document.getElementById('autoSyncFileName').textContent = '';
+                document.getElementById('autoSyncBtn').textContent = '🔄 Auto-Sync Excel';
+                document.getElementById('autoSyncBtn').classList.remove('btn-danger');
+                document.getElementById('autoSyncBtn').classList.add('btn-primary');
+                this.updateStatus('idle', '');
+            },
+
+            // Update the status bar dot + text
+            updateStatus(state, message) {
+                const dot  = document.getElementById('autoSyncDot');
+                const text = document.getElementById('autoSyncStatusText');
+                if (!dot || !text) return;
+
+                text.textContent = message;
+                dot.className = 'sync-dot';
+                const map = { idle: 'sync-dot-idle', syncing: 'sync-dot-syncing',
+                              success: 'sync-dot-success', error: 'sync-dot-error' };
+                dot.classList.add(map[state] || 'sync-dot-idle');
+            }
+        };
 
         // Initialize App
         function initializeApp() {
@@ -2495,76 +2683,78 @@
             populateCategoryFilter();
             setDefaultDates();
             updateDataStatus();
-        }
 
+            // Show browser-support warning immediately if API is absent
+            if (!('showOpenFilePicker' in window)) {
+                document.getElementById('syncUnsupportedWarning').style.display = 'block';
+            }
+        }
         function populateCategoryFilter() {
             const select = document.getElementById('filterCategory');
             const allCategories = [...APP.categories.income, ...APP.categories.expense];
             select.innerHTML = '<option value="all">All Categories</option>' +
                 allCategories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
-
         function setDefaultDates() {
             const now = new Date();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-            
+
             document.getElementById('reportStartDate').value = firstDay.toISOString().split('T')[0];
             document.getElementById('reportEndDate').value = lastDay.toISOString().split('T')[0];
         }
-
         // Event Listeners
         document.addEventListener('DOMContentLoaded', async () => {
             // Check license on load
             if (await checkLicense()) {
                 showMainApp();
             }
-            
+
             // License activation
             document.getElementById('activateBtn').addEventListener('click', async () => {
                 const key = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
                 await activateLicense(key);
             });
-            
+
             document.getElementById('licenseKeyInput').addEventListener('keypress', async (e) => {
                 if (e.key === 'Enter') {
                     const key = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
                     await activateLicense(key);
                 }
             });
-            
+
             // Logout
             document.getElementById('logoutBtn').addEventListener('click', logout);
-            
+
             // Navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    
+
                     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
                     document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
-                    
+
                     // Update data status when viewing settings
                     if (btn.dataset.tab === 'settings') {
                         updateDataStatus();
                     }
                 });
             });
-            
+
             // Transaction modal
             document.getElementById('addTransactionBtn').addEventListener('click', () => showTransactionModal());
             document.querySelector('.close').addEventListener('click', hideTransactionModal);
             document.querySelector('.cancel-btn').addEventListener('click', hideTransactionModal);
-            
+
             // Transaction form
             document.getElementById('txType').addEventListener('change', (e) => {
                 updateCategoryOptions(e.target.value);
             });
-            
+
             document.getElementById('transactionForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-                
+
                 const transaction = {
                     date: document.getElementById('txDate').value,
                     type: document.getElementById('txType').value,
@@ -2573,71 +2763,99 @@
                     amount: document.getElementById('txAmount').value,
                     notes: document.getElementById('txNotes').value
                 };
-                
+
                 if (APP.editingTransactionId) {
                     updateTransaction(APP.editingTransactionId, transaction);
                 } else {
                     addTransaction(transaction);
                 }
-                
+
                 hideTransactionModal();
             });
-            
+
             // Filters
             document.getElementById('searchTransaction').addEventListener('input', renderTransactions);
             document.getElementById('filterType').addEventListener('change', renderTransactions);
             document.getElementById('filterCategory').addEventListener('change', renderTransactions);
-            
+
             // Bulk actions
             document.getElementById('selectAllBtn').addEventListener('click', () => {
                 document.querySelectorAll('.transaction-checkbox').forEach(cb => cb.checked = true);
             });
-            
+
             document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelectedTransactions);
-            
+
             document.getElementById('exportSelectedBtn').addEventListener('click', () => {
                 const selected = Array.from(document.querySelectorAll('.transaction-checkbox:checked'))
                     .map(cb => APP.transactions.find(t => t.id === cb.dataset.id));
-                
+
                 if (selected.length === 0) {
                     alert('Please select transactions to export');
                     return;
                 }
-                
+
                 const ws = XLSX.utils.json_to_sheet(selected);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'Selected Transactions');
                 XLSX.writeFile(wb, 'selected-transactions.xlsx');
             });
-            
+
             // Import functionality
             document.getElementById('importBtn').addEventListener('click', () => {
                 document.getElementById('fileInput').click();
             });
-            
+
             document.getElementById('fileInput').addEventListener('change', handleFileImport);
             document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
-            
+
+            // ADDED: Auto-Sync Excel button toggle
+            document.getElementById('autoSyncBtn').addEventListener('click', async () => {
+                if (ExcelSync.isRunning) {
+                    ExcelSync.stop();
+                } else {
+                    await ExcelSync.start();
+                }
+            });
+
+            // ADDED: Sync Now button — manual immediate sync
+            document.getElementById('syncNowBtn').addEventListener('click', () => {
+                ExcelSync.readAndSync();
+            });
+
+            // ADDED: Stop button inside status bar
+            document.getElementById('syncStopBtn').addEventListener('click', () => {
+                ExcelSync.stop();
+            });
+
+            // ADDED: Restart polling when interval dropdown changes
+            document.getElementById('syncInterval').addEventListener('change', () => {
+                if (ExcelSync.isRunning && ExcelSync.intervalId) {
+                    clearInterval(ExcelSync.intervalId);
+                    const seconds = parseInt(document.getElementById('syncInterval').value) || 30;
+                    ExcelSync.intervalId = setInterval(() => ExcelSync.readAndSync(), seconds * 1000);
+                }
+            });
+
             // Reports
             document.getElementById('generateReportBtn').addEventListener('click', generateReports);
-            
+
             document.querySelectorAll('.export-pdf').forEach(btn => {
                 btn.addEventListener('click', () => {
                     exportToPDF(btn.dataset.report);
                 });
             });
-            
+
             // Tax
             document.getElementById('generateTaxBtn').addEventListener('click', generateTaxSummary);
             document.getElementById('exportTaxPdfBtn').addEventListener('click', () => exportToPDF('tax'));
             document.getElementById('exportTaxExcelBtn').addEventListener('click', exportToExcel);
-            
+
             // Settings
             document.getElementById('settingsForm').addEventListener('submit', (e) => {
                 e.preventDefault();
                 saveSettings();
             });
-            
+
             document.getElementById('clearSettingsBtn').addEventListener('click', clearSettings);
         });
     </script>
