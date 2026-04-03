@@ -2396,7 +2396,7 @@
 
                     if (fileName.endsWith('.csv')) {
                         const text = e.target.result;
-                        const lines = text.split('\n');
+                        const lines = text.split(/\r?\n/);
                         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
 
                         for (let i = 1; i < lines.length; i++) {
@@ -2407,22 +2407,24 @@
 
                             headers.forEach((header, index) => {
                                 transaction[header] = values[index]?.trim() || '';
+                                console.log("CSV ROWS DETECTED:", importedData.length);
                             });
 
                             importedData.push(transaction);
                         }
+                        console.log("TOTAL LINES IN FILE:", lines.length);
+                        console.log("CSV ROWS DETECTED:", importedData.length);
                     } else {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array', sheetRows: 10001 });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                         // Expand the sheet's used-range to 10 000 rows so XLSX does not
                         // silently stop at whatever !ref the file declares internally.
-                        if (firstSheet['!ref']) {
-                            const ref = XLSX.utils.decode_range(firstSheet['!ref']);
-                            ref.e.r = Math.max(ref.e.r, 10000);
-                            firstSheet['!ref'] = XLSX.utils.encode_range(ref);
-                        }
-                        importedData = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+                    importedData = XLSX.utils.sheet_to_json(firstSheet, {
+    defval: '',
+    raw: false,
+    range: 0 // force full sheet read
+});
                     }
 
                     let successCount = 0;
@@ -2610,10 +2612,12 @@
                         ref.e.r = Math.max(ref.e.r, 10000);
                         firstSheet['!ref'] = XLSX.utils.encode_range(ref);
                     }
-                    const importedData = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+                    console.log("ROWS FROM EXCEL:", importedData.length);
 
                     const { transactions: newRows, errorCount } = this.parseRows(importedData);
-                    const mode = document.getElementById('syncMode').value;
+
+                    console.log("VALID TRANSACTIONS:", newRows.length);
+                    console.log("ROWS SKIPPED:", errorCount);
 
                     if (mode === 'replace') {
                         // Replace all existing transactions with the file contents
