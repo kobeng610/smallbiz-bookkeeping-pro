@@ -2338,21 +2338,16 @@
                         console.log('CSV ROWS DETECTED:', importedData.length);
                     } else {
                         const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array', sheetRows: 10001 });
+                        // No sheetRows cap — let XLSX parse the entire file binary.
+                        // Setting sheetRows locks the !ref at that boundary, so any
+                        // !ref expansion afterward is pointless (cells beyond the cap
+                        // were never parsed). Removing the cap lets sheet_to_json
+                        // see all rows up to 10 000.
+                        const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        // Expand the sheet's declared used-range to 10,000 rows.
-                        // Excel can save a stale !ref that stops at the last row
-                        // the file had when first created, silently cutting off
-                        // any rows added afterward.
-                        if (firstSheet['!ref']) {
-                            const refRange = XLSX.utils.decode_range(firstSheet['!ref']);
-                            refRange.e.r = Math.max(refRange.e.r, 9999);
-                            firstSheet['!ref'] = XLSX.utils.encode_range(refRange);
-                        }
                         importedData = XLSX.utils.sheet_to_json(firstSheet, {
                             defval: '',
-                            raw: false,
-                            range: 0
+                            raw: false
                         });
                     }
 
@@ -2524,20 +2519,13 @@
                     this.updateStatus('syncing', 'Syncing…');
 
                     const arrayBuffer = await file.arrayBuffer();
-                    const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array', sheetRows: 10001 });
+                    // No sheetRows cap — same reasoning as the manual import path.
+                    const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 
-                    if (firstSheet['!ref']) {
-                        const ref = XLSX.utils.decode_range(firstSheet['!ref']);
-                        ref.e.r = Math.max(ref.e.r, 10000);
-                        firstSheet['!ref'] = XLSX.utils.encode_range(ref);
-                    }
-
-                    // FIX 1: importedData was undefined — now properly assigned
                     const importedData = XLSX.utils.sheet_to_json(firstSheet, {
                         defval: '',
-                        raw: false,
-                        range: 0
+                        raw: false
                     });
 
                     console.log('ROWS FROM EXCEL:', importedData.length);
